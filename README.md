@@ -14,8 +14,7 @@ Operating Systems:
 Other Dependencies:
 
 - Docker
-- NodeJS v8.10+
-- NPM v6.1+
+- Docker compose (https://docs.docker.com/compose/install)
 
 ## Installation
 
