@@ -1,0 +1,76 @@
+version: "3"
+
+volumes:
+  mongodb-data:
+    driver: local
+
+services:
+  mongodb:
+    image: mongo:3.6.7
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/var/lib/mongodb
+    networks:
+      - apiserver
+
+  keycloak:
+    image: jboss/keycloak
+    ports:
+      - 8081:8080
+    networks:
+      - apiserver
+
+  auth-server:
+    image: exlskills/auth-server
+    ports:
+      - 3030:3030
+    environment:
+      DB_URI: mongodb://mongodb:27017
+      NODE_ENV: DEBUG
+      KEYCLOAK_CLIENT_SECRET: secret
+    depends_on:
+      - mongodb
+      - keycloak
+    entrypoint:
+      - npm
+      - start
+    networks:
+      - apiserver
+
+  usi-server:
+    image: exlskills/auth-server
+    ports:
+      - 5002:5002
+    environment:
+      DB_URI: mongodb://mongodb:27017
+      NODE_ENV: DEBUG
+      KEYCLOAK_CLIENT_SECRET: secret
+    depends_on:
+      - mongodb
+      - keycloak
+    entrypoint:
+      - npm
+      - start
+    networks:
+      - apiserver
+
+  gql-server:
+    image: exlskills/gql-server
+    ports:
+      - 8080:8080
+    environment:
+      DB_URI: mongodb://mongodb:27017
+      NODE_ENV: DEBUG
+    depends_on:
+      - mongodb
+      - auth-server
+      - usi-server
+    entrypoint:
+      - npm
+      - start
+    networks:
+      - apiserver
+
+networks:
+  apiserver:
