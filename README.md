@@ -25,7 +25,8 @@ git clone https://github.com/exlskills/devstack
 
 ## Running
 
-docker-compose up -d
+- docker-compose up -d
+- To import database dump, run 'node tasks/seed --db db_uri --dump dump_folder'
 
 ## License
 
