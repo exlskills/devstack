@@ -21,12 +21,16 @@ Other Dependencies:
 ```
 git clone https://github.com/exlskills/devstack
 
+cd devstack
+
+npm install
+
 ```
 
 ## Running
 
-- docker-compose up -d
-- To import database dump, run 'node tasks/seed --db db_uri --dump dump_folder'
+- To start up the whole backend nstack, run ```docker-compose up -d```
+- To import database dump, run ```node tasks/seed --db db_uri --dump dump_folder```. If ```db_uri``` is not specified, ```mongodb://localhost:27017/webph2_dev``` is used.
 
 ## License
 
