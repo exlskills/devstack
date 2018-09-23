@@ -1,7 +1,7 @@
 version: "3"
 
 volumes:
-  mongodb-data:
+  exlinc-mongodb:
     driver: local
 
 services:
@@ -10,7 +10,7 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb-data:/var/lib/mongodb
+      - exlinc-mongodb:/var/lib/mongodb
     networks:
       - apiserver
 
