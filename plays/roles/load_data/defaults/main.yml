@@ -1,0 +1,6 @@
+---
+mongo_data_files_to_load:
+  - json_file: mongodb/list_def.json
+    collection_name: list_def
+  - json_file: mongodb/path.json
+    collection_name: path

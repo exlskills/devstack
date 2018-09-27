@@ -1,0 +1,95 @@
+- name: Get Process Token
+  uri:
+    url: "{{ keycloak_url}}/auth/realms/master/protocol/openid-connect/token"
+    method: POST
+    body_format: form-urlencoded
+    body:
+      client_id: admin-cli
+      username: "{{ admin_user }}"
+      password: "{{ admin_password }}"
+      grant_type: "password"
+  register: process_token
+  no_log: True
+  
+#- debug:
+#    var: process_token
+
+#- name: test get master
+#  uri:
+#    url: "{{ keycloak_url }}/auth/admin/realms/master"
+#    method: GET
+#    headers:
+#      Authorization: "bearer {{ process_token.json.access_token }}" 
+
+- name: Get realms
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms"
+    method: GET
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+  register: all_realms
+
+- name: Create Realm
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms"
+    method: POST
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+    body_format: json
+    body: "{{ lookup('template', 'realm_props.json.j2') }}"
+    status_code: 201, 204
+  vars:
+    querystr: "[?realm=='{{ realm_name }}'].realm | [0]"
+    queryresult: "{{all_realms.json|json_query(querystr)}}"
+  when: queryresult == ""
+
+- name: Get all clients
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms/{{ realm_name }}/clients"
+    method: GET
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+  register: all_clients
+
+- name: Create client
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms/{{ realm_name }}/clients"
+    method: POST
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+    body_format: json
+    body: "{{ lookup('template', 'realm_client.json.j2') }}"
+    status_code: 201, 204
+  vars:
+    querystr: "[?clientId=='{{ client_id }}'].id | [0]"
+    queryresult: "{{all_clients.json|json_query(querystr)}}"
+  when: queryresult == ""
+
+- name: Get all clients
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms/{{ realm_name }}/clients"
+    method: GET
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+  register: all_clients
+
+- name: Retrieve Client secret
+  uri:
+    url: "{{ keycloak_url }}/auth/admin/realms/{{ realm_name }}/clients/{{queryresult}}/client-secret"
+    method: GET
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+  vars:
+    querystr: "[?clientId=='{{ client_id }}'].id | [0]"
+    queryresult: "{{all_clients.json|json_query(querystr)}}"
+  register: client_secret_reg
+
+- name: Record Client Secret
+  set_fact:
+    keycloak_client_secret: "{{ client_secret_reg.json.value }}"

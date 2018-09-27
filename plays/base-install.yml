@@ -1,0 +1,17 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: init_install
+    - include_role:
+        name: setup_keycloak
+    - include_role:
+        name: install_code
+    - include_role:
+        name: load_courses
+    - include_role:
+        name: load_data
+    - include_role:
+        name: prepare_runtime

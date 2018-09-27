@@ -1,0 +1,5 @@
+---
+- name: Create core docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: ../docker-compose.yml

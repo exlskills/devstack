@@ -1,0 +1,15 @@
+---
+host_dockernetwork_ip: 172.17.0.1
+ports_on_host:
+  keycloak: 8182
+  auth_server: 3130
+  gql_server: 8180
+  usi_server: 5102
+  web_client: 4100  
+  exlcode_ide: 8100
+  exlcode_repl: 8181
+mongo_uri: mongodb://mongo.exlskills:27017
+mongo_db: exldev  
+memcached_url: memcached.exlskills:11211
+stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
+node_base_image: node:8

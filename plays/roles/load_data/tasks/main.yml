@@ -1,0 +1,6 @@
+---
+- name: Load JSON data
+  shell: mongoimport --uri {{ mongo_uri }}/{{ mongo_db }} --collection {{ item.collection_name }} --file {{ item.json_file }}
+  args:
+    chdir: "roles/load_data/files"
+  loop: "{{ mongo_data_files_to_load }}"

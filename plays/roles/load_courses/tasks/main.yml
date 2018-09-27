@@ -1,0 +1,40 @@
+---
+- name: Get dep
+  shell: go get -u github.com/golang/dep/cmd/dep
+
+- name: Get eocsutil
+  shell: go get -u github.com/exlskills/eocsutil
+
+- name: Run 'dep ensure -v'
+  shell: dep ensure -v
+  args:
+    chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
+  vars:
+    gopath: "{{ lookup('env','GOPATH') }}"
+
+- name: Run 'yarn install' eocsutil
+  yarn:
+    path: "{{ gopath }}/src/github.com/exlskills/eocsutil"
+  vars:
+    gopath: "{{ lookup('env','GOPATH') }}"
+
+- name: Run 'go build'
+  shell: go build
+  args:
+    chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
+  vars:
+    gopath: "{{ lookup('env','GOPATH') }}"
+
+- name: Clone Course Repositories
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    force: yes
+  loop: "{{ courses_to_load }}"    
+
+- name: Load Courses
+  include_tasks: load_course.yml
+  vars:
+    course_folder: "{{ item.dest }}"
+  loop: "{{ courses_to_load }}"    
+  

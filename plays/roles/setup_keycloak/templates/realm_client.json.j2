@@ -1,0 +1,45 @@
+{
+    "access":{
+        "configure":true,
+        "manage":true,
+        "view":true
+    },
+    "attributes":{
+        "saml.assertion.signature":"false",
+        "saml.authnstatement":"false",
+        "saml.client.signature":"false",
+        "saml.encrypt":"false",
+        "saml.force.post.binding":"false",
+        "saml.multivalued.roles":"false",
+        "saml.onetimeuse.condition":"false",
+        "saml.server.signature":"false",
+        "saml.server.signature.keyinfo.ext":"false",
+        "saml_force_name_id_format":"false"
+    },
+    "authorizationServicesEnabled":false,
+    "bearerOnly":false,
+    "clientAuthenticatorType":"client-secret",
+    "clientId":"{{ client_id }}",
+    "consentRequired":false,
+    "description":"{{ client_description }} ",
+    "directAccessGrantsEnabled":true,
+    "enabled":true,
+    "frontchannelLogout":false,
+    "fullScopeAllowed":false,
+    "id":null,
+    "implicitFlowEnabled":false,
+    "name":"{{ client_name }}",
+    "nodeReRegistrationTimeout":-1,
+    "notBefore":0,
+    "protocol":"openid-connect",
+    "publicClient":"{{ access_type_public_client }}",
+    "redirectUris":{{ redirect_uris }},
+    "serviceAccountsEnabled":false,
+    "standardFlowEnabled":true,
+    "surrogateAuthRequired":false,
+    "useTemplateConfig":false,
+    "useTemplateMappers":false,
+    "useTemplateScope":false,
+    "webOrigins":[]
+}
+

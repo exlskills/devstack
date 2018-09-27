@@ -1,0 +1,43 @@
+---
+- name: Clone Repositories
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+    force: yes
+  loop: "{{ repos_to_install }}"    
+
+- name: Create Process Config Files
+  template:
+    src: "{{ item.template }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ process_config_files }}"    
+
+- name: exlcode-ide pre-install
+  shell: ./scripts/npm.sh install
+  args:
+    chdir: /exlskills/exlcode-ide
+
+- name: Run 'npm install'
+  npm:
+    path: "{{ item }}"
+  loop: "{{ folders_to_run_npm_install }}"
+
+- name: Install gulp for exlcode-ide
+  shell: npm install gulp-install
+  args:
+    chdir: /exlskills/exlcode-ide/exlcode
+
+- name: exlcode-ide 'npm run build-min' 
+  shell: npm run build-min
+  args:
+    chdir: /exlskills/exlcode-ide/exlcode
+
+- name: Run 'yarn install'
+  yarn:
+    path: "{{ item }}"
+  loop: "{{ folders_to_run_yarn_install }}"
+
+- name: Run 'yarn run relay' web-client
+  shell: yarn run relay
+  args:
+    chdir: /exlskills/web-client

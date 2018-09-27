@@ -1,0 +1,8 @@
+---
+- name: record code base host path  
+  set_fact: 
+    codebase_hostpath: "{{ lookup('env','CODE_BASE_HOST_PATH') }}"
+
+- name: check CODE_BASE_HOST_PATH was passed via Environment
+  assert:
+        that: codebase_hostpath and codebase_hostpath != ''

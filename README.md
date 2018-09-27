@@ -16,18 +16,26 @@ Other Dependencies:
 - Docker
 - Docker compose (https://docs.docker.com/compose/install)
 
-## Installation
+
+## Full Devstack Set
+
+TODO
+
+
+## Basic Compose Set 
+
+### Installation
 
 ```
 git clone https://github.com/exlskills/devstack
 
-cd devstack
+cd devstack/basic-compose-set
 
 npm install
 
 ```
 
-## Running
+### Running
 
 - To start up the whole backend nstack, run ```docker-compose up -d```
 - To import database dump, run ```node tasks/seed --db db_uri --dump dump_folder```. If ```db_uri``` is not specified, ```mongodb://localhost:27017/webph2_dev``` is used.
