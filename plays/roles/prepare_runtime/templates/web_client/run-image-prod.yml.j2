@@ -1,0 +1,11 @@
+
+  {{ config.name }}:
+    container_name: {{ config.name }}.{{ docker_compose.domain_suffix }}
+    image: nginx
+    ports:
+      - {{ config.port_on_host }}:80
+    volumes:
+      - {{ codebase_hostpath }}/{{ config.folder }}/build:/usr/share/nginx/html/learn
+      - {{ codebase_hostpath }}/{{ config.folder }}/nginx_config:/etc/nginx:ro
+    networks:
+      - {{ docker_compose.network_name }}

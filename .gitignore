@@ -1,3 +1,7 @@
+plays/*.retry
+docker-compose.yml
+compose_fragments/
+
 .idea
 .vscode
 

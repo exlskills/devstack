@@ -4,20 +4,6 @@ networks:
   exlskills:
 
 services:
-  web-client:
-    container_name: web-client.exlskills
-    image: node:8
-    ports:
-      - 4100:4000
-    working_dir: /app
-    volumes:
-      - /home/ubuntu/exlskills-dev/web-client:/app
-    entrypoint:
-      - yarn
-      - run
-      - start
-    networks:
-      - exlskills
 
   auth-server:
     container_name: auth-server.exlskills
@@ -45,7 +31,7 @@ services:
       - npm
       - start
     networks:
-      - exlskills      
+      - exlskills
 
   usi-server:
     container_name: usi-server.exlskills
@@ -61,28 +47,13 @@ services:
     networks:
       - exlskills
 
-  exlcode-ide:
-    container_name: exlcode-ide.exlskills
-    build:
-      context: /home/ubuntu/exlskills-dev/exlcode-ide
+  web-client:
+    container_name: web-client.exlskills
+    image: nginx
     ports:
-      - 8100:80
-    entrypoint:
-      - nginx 
-      - -g 
-      - 'daemon off;'
+      - 4100:80
+    volumes:
+      - /home/ubuntu/exlskills-dev/web-client/build:/usr/share/nginx/html/learn
+      - /home/ubuntu/exlskills-dev/web-client/nginx_config:/etc/nginx:ro
     networks:
-      - exlskills      
-
-  exlcode-repl:
-    container_name: exlcode-repl.exlskills
-    build:
-      context: /home/ubuntu/exlskills-dev/exlcode-repl
-    ports:
-      - 8181:80
-    entrypoint:
-      - nginx 
-      - -g 
-      - 'daemon off;'
-    networks:
-      - exlskills            
+      - exlskills

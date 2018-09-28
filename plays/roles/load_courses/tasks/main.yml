@@ -28,13 +28,13 @@
 - name: Clone Course Repositories
   git:
     repo: "{{ item.repo }}"
-    dest: "{{ item.dest }}"
+    dest: "/exlskills/courses/{{ item.folder }}"
     force: yes
   loop: "{{ courses_to_load }}"    
 
-- name: Load Courses
+- name: Load Courses into DB
   include_tasks: load_course.yml
   vars:
-    course_folder: "{{ item.dest }}"
+    course_folder: "/exlskills/courses/{{ item.folder }}"
   loop: "{{ courses_to_load }}"    
   

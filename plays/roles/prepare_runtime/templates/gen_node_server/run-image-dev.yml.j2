@@ -1,0 +1,14 @@
+
+  {{ config.name }}:
+    container_name: {{ config.name }}.{{ docker_compose.domain_suffix }}
+    image: {{ node_base_image }}
+    ports:
+      - {{ config.port_on_host }}:{{ config.container_port }}
+    working_dir: /app
+    volumes:
+      - {{ codebase_hostpath }}/{{ config.folder }}:/app
+    entrypoint:
+      - npm
+      - start
+    networks:
+      - {{ docker_compose.network_name }}

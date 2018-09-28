@@ -20,6 +20,7 @@ services:
     volumes:
       - ./:/hostlink
       - ${DEVSTACK_WORKSPACE}:/exlskills
+      /etc/localtime:/etc/localtime:ro
 
   keycloak:
     container_name: keycloak.exlskills

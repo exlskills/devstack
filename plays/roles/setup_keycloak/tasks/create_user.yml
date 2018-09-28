@@ -1,0 +1,52 @@
+- name: Check if user already exists
+  uri:
+    url: "{{ keycloak_url}}/auth/admin/realms/{{ realm_name }}/users?username={{ user_data.username }}"
+    method: GET
+    headers:
+      Authorization: "bearer {{ process_token.json.access_token }}"
+      Content-Type: application/json
+  register: user_fetched
+
+- name: Create user if not already present
+  block:
+    - name: Create user
+      uri:
+        url: "{{ keycloak_url}}/auth/admin/realms/{{ realm_name }}/users"
+        method: POST
+        headers:
+          Authorization: "bearer {{ process_token.json.access_token }}"
+          Content-Type: application/json
+        body_format: json
+        body: "{{ lookup('template', 'user.json.j2') }}"
+        status_code: 201, 204
+      vars:
+        username: "{{ user_data.username }}"
+        user_firstName: "{{ user_data.firstName }}"
+        user_lastName: "{{ user_data.lastName }}"
+        user_email: "{{ user_data.email }}"
+
+    - name: Get user
+      uri:
+        url: "{{ keycloak_url}}/auth/admin/realms/{{ realm_name }}/users?username={{ user_data.username }}"
+        method: GET
+        headers:
+          Authorization: "bearer {{ process_token.json.access_token }}"
+          Content-Type: application/json
+      register: the_user
+
+    - name: Set user password
+      uri:
+        url: "{{ keycloak_url}}/auth/admin/realms/{{ realm_name }}/users/{{queryresult}}/reset-password"
+        method: PUT
+        headers:
+          Authorization: "bearer {{ process_token.json.access_token }}"
+          Content-Type: application/json
+        body_format: json
+        body: "{{ lookup('template', 'user_reset_pwd.json.j2') }}"
+        status_code: 201, 204
+      vars:
+        querystr: "[0].id"
+        queryresult: "{{the_user.json|json_query(querystr)}}"
+        user_pwd: "{{ user_data.password }}"
+
+  when: user_fetched.json | length < 1    

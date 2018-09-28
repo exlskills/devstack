@@ -1,0 +1,81 @@
+---
+projects_in_scope:
+  - name: auth-server
+    project_type: gen-node-server
+    port_on_host: 3130
+    container_port: 3030
+    service_setup_method: run-image-dev
+    clone_repo: yes
+    repo: https://github.com/exlskills/auth-server.git
+    folder: auth-server
+    run_install: npm
+    run_build: npm
+    config_template: auth-server.env.j2
+    config_file: .env
+    prebuilt_image: exlskills/auth-server
+  
+  - name: gql-server
+    project_type: gen-node-server
+    port_on_host: 8180
+    container_port: 8080
+    service_setup_method: run-image-dev
+    clone_repo: yes
+    repo: https://github.com/exlskills/gql-server.git
+    folder: gql-server
+    run_install: npm
+    run_build: npm
+    config_template: gql-server.env.j2
+    config_file: .env
+    prebuilt_image: exlskills/gql-server
+  
+  - name: usi-server
+    project_type: gen-node-server
+    port_on_host: 5102
+    container_port: 5002
+    service_setup_method: run-image-dev
+    clone_repo: yes
+    repo: https://github.com/exlskills/usi-server.git
+    folder: usi-server
+    run_install: npm
+    run_build: npm
+    config_template: usi-server.env.j2
+    config_file: .env        
+    prebuilt_image: exlskills/usi-server
+  
+  - name: web-client
+    project_type: web-client
+    port_on_host: 4100
+    container_port: 4000  
+    service_setup_method: run-image-prod
+    clone_repo: yes
+    repo: https://github.com/exlskills/web-client.git
+    folder: web-client
+    run_install: yarn
+    run_build: yarn
+    config_template: web-client.env.j2
+    config_file: .env    
+    prebuilt_image: must-use-custom
+  
+  - name: exlcode-ide
+    project_type: other
+    port_on_host: 8100  
+    service_setup_method: run-image-prod
+    clone_repo: yes
+    repo: https://github.com/exlcode/exlcode.git
+    folder: exlcode-ide
+  
+  - name: exlcode-repl
+    project_type: other
+    port_on_host: 8181
+    service_setup_method: run-image-prod
+    clone_repo: yes
+    repo: https://github.com/exlcode/repl-web.git
+    folder: exlcode-repl
+    run_install: yarn
+
+courses_to_load:
+  - repo: https://github.com/exlskills/course-java-basics.git
+    folder: course-java-basics
+  - repo: https://github.com/exlskills/course-python-introduction.git
+    folder: course-python-introduction  
+  

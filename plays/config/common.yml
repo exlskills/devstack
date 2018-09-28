@@ -13,3 +13,18 @@ mongo_db: exldev
 memcached_url: memcached.exlskills:11211
 stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
 node_base_image: node:8
+docker_compose:
+  network_name: exlskills
+  domain_suffix: exlskills
+
+test_users:
+  - username: jd
+    firstName: Jane
+    lastName: Doe
+    email: jd@example.com
+    password: jdTesting123
+  - username: jp
+    firstName: John
+    lastName: Public
+    email: jp@example.com
+    password: jpTesting123

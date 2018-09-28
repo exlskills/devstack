@@ -93,3 +93,9 @@
 - name: Record Client Secret
   set_fact:
     keycloak_client_secret: "{{ client_secret_reg.json.value }}"
+
+- name: Create test users
+  include_tasks: create_user.yml
+  vars:
+    user_data: "{{ item }}"
+  loop: "{{ test_users }}"

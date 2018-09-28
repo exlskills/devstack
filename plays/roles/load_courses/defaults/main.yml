@@ -1,6 +1,0 @@
----
-courses_to_load:
-  - repo: https://github.com/exlskills/course-java-basics.git
-    dest: /exlskills/courses/course-java-basics
-  - repo: https://github.com/exlskills/course-python-introduction.git
-    dest: /exlskills/courses/course-python-introduction
