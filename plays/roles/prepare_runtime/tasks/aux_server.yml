@@ -1,0 +1,19 @@
+---
+- debug:
+    msg: "{{ project_config }}"
+
+- name: template build-image
+  template:
+    src: aux_server/build-image.yml.j2
+    dest: "../compose_fragments/{{ project_config.name }}.yml"
+  vars:
+    config: "{{ project_config }}"
+  when: project_config.service_setup_method is defined and project_config.service_setup_method == "build-image"  
+
+- name: template pull-image
+  template:
+    src: aux_server/pull-image.yml.j2
+    dest: "../compose_fragments/{{ project_config.name }}.yml"
+  vars:
+    config: "{{ project_config }}"
+  when: project_config.service_setup_method is defined and project_config.service_setup_method == "pull-image"  

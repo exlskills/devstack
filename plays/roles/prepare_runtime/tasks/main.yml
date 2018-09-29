@@ -4,13 +4,13 @@
     src: 0-docker-compose-header.yml.j2
     dest: ../compose_fragments/0docker-compose-header.yml
 
-- name: Set up gen-node-servers
-  include_tasks: gen_node_server.yml
+- name: Set up generic-node-servers
+  include_tasks: generic_node_server.yml
   vars:
     querystr: "[?name=='{{ item.name }}'] | [0]"
-    project_config: "{{projects_in_scope|json_query(querystr)}}"   
+    project_config: "{{projects_in_scope|json_query(querystr)}}"
   loop: "{{ projects_in_scope }}" 
-  when: item.project_type is defined and item.project_type == "gen-node-server"
+  when: item.project_type is defined and item.project_type == "generic-node-server"
 
 - name: Set up web-client    
   include_tasks: web_client.yml
@@ -19,6 +19,14 @@
     project_config: "{{projects_in_scope|json_query(querystr)}}"   
   loop: "{{ projects_in_scope }}" 
   when: item.project_type is defined and item.project_type == "web-client"
+
+- name: Set up aux-servers
+  include_tasks: aux_server.yml
+  vars:
+    querystr: "[?name=='{{ item.name }}'] | [0]"
+    project_config: "{{projects_in_scope|json_query(querystr)}}"   
+  loop: "{{ projects_in_scope }}" 
+  when: item.project_type is defined and item.project_type == "aux-server"
 
 - name: Assemble into core docker-compose.yml
   assemble:

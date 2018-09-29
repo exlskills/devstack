@@ -1,0 +1,10 @@
+
+  {{ config.name }}:
+    container_name: {{ config.name }}.{{ docker_compose.domain_suffix }}
+    image: {{ config.prebuilt_image }}
+    ports:
+      - {{ config.port_on_host }}:{{ config.container_port }}
+    env_file:
+      - {{ codebase_hostpath }}/{{ config.folder }}/{{ config.config_file }}
+    networks:
+      - {{ docker_compose.network_name }}

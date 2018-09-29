@@ -1,0 +1,14 @@
+#jinja2: trim_blocks: "true", lstrip_blocks: "false"
+
+  {{ config.name }}:
+    container_name: {{ config.name }}.{{ docker_compose.domain_suffix }}
+    build:
+      context: {{ codebase_hostpath }}/{{ config.folder }}
+    ports:
+      - {{ config.port_on_host }}:{{ config.container_port }}
+    entrypoint:
+      {% for entrypoint in config.entrypoint %}
+      - {{ entrypoint }}
+      {% endfor %}
+    networks:
+      - {{ docker_compose.network_name }}

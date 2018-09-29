@@ -1,8 +1,9 @@
 ---
 projects_in_scope:
+
   - name: auth-server
-    project_type: gen-node-server
-    port_on_host: 3130
+    project_type: generic-node-server
+    port_on_host: "{{ ports_on_host.auth_server }}"
     container_port: 3030
     service_setup_method: run-image-dev
     clone_repo: yes
@@ -15,8 +16,8 @@ projects_in_scope:
     prebuilt_image: exlskills/auth-server
   
   - name: gql-server
-    project_type: gen-node-server
-    port_on_host: 8180
+    project_type: generic-node-server
+    port_on_host: "{{ ports_on_host.gql_server }}"
     container_port: 8080
     service_setup_method: run-image-dev
     clone_repo: yes
@@ -29,8 +30,8 @@ projects_in_scope:
     prebuilt_image: exlskills/gql-server
   
   - name: usi-server
-    project_type: gen-node-server
-    port_on_host: 5102
+    project_type: generic-node-server
+    port_on_host: "{{ ports_on_host.usi_server }}"
     container_port: 5002
     service_setup_method: run-image-dev
     clone_repo: yes
@@ -44,7 +45,7 @@ projects_in_scope:
   
   - name: web-client
     project_type: web-client
-    port_on_host: 4100
+    port_on_host: "{{ ports_on_host.web_client }}"
     container_port: 4000  
     service_setup_method: run-image-prod
     clone_repo: yes
@@ -57,25 +58,42 @@ projects_in_scope:
     prebuilt_image: must-use-custom
   
   - name: exlcode-ide
-    project_type: other
-    port_on_host: 8100  
-    service_setup_method: run-image-prod
+    project_type: aux-server
+    port_on_host: "{{ ports_on_host.exlcode_ide }}"
+    container_port: 80
+    service_setup_method: build-image
     clone_repo: yes
     repo: https://github.com/exlcode/exlcode.git
     folder: exlcode-ide
+    entrypoint: "{{ entrypoint_nginx }}"
+    prebuilt_image: exlcode/ide-web
   
   - name: exlcode-repl
-    project_type: other
-    port_on_host: 8181
-    service_setup_method: run-image-prod
+    project_type: aux-server
+    port_on_host: "{{ ports_on_host.exlcode_repl }}"
+    container_port: 80
+    service_setup_method: build-image
     clone_repo: yes
     repo: https://github.com/exlcode/repl-web.git
     folder: exlcode-repl
     run_install: yarn
+    entrypoint: "{{ entrypoint_nginx }}"
+    prebuilt_image: exlcode/repl-web
 
 courses_to_load:
   - repo: https://github.com/exlskills/course-java-basics.git
     folder: course-java-basics
   - repo: https://github.com/exlskills/course-python-introduction.git
     folder: course-python-introduction  
-  
+
+test_users:
+  - username: jd
+    firstName: Jane
+    lastName: Doe
+    email: jd@example.com
+    password: jdTesting123
+  - username: jp
+    firstName: John
+    lastName: Public
+    email: jp@example.com
+    password: jpTesting123

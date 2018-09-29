@@ -1,11 +1,11 @@
 ---
 keycloak_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.keycloak }}"
-realm_name: exlinc
+realm_name: "{{ keycloak_realm }}"
 realm_display_name: "{{ realm_name }}"
 admin_user: admin
 admin_password: Pa55w0rd
-client_id: exlskills
-client_description: "{{ client_id }}"
-client_name: "{{ client_id }}"
+client_id: "{{ keycloak_client_id }}"
+client_description: "{{ keycloak_client_id }}"
+client_name: "{{ keycloak_client_id }}"
 access_type_public_client: false
 redirect_uris: ["http://localhost:{{ ports_on_host.auth_server }}/*"]

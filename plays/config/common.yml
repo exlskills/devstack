@@ -1,6 +1,9 @@
 ---
 host_dockernetwork_ip: 172.17.0.1
+
 ports_on_host:
+  mongo: 27117
+  memcached: 11212
   keycloak: 8182
   auth_server: 3130
   gql_server: 8180
@@ -8,23 +11,25 @@ ports_on_host:
   web_client: 4100  
   exlcode_ide: 8100
   exlcode_repl: 8181
-mongo_uri: mongodb://mongo.exlskills:27017
+
+mongo_uri: "mongodb://{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
 mongo_db: exldev  
-memcached_url: memcached.exlskills:11211
+
+memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
+
 stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
+
+keycloak_client_id: exlskills
+keycloak_realm: exlinc
+keycloak_host_url: "http://localhost:{{ ports_on_host.keycloak }}"
+
 node_base_image: node:8
+
 docker_compose:
   network_name: exlskills
   domain_suffix: exlskills
 
-test_users:
-  - username: jd
-    firstName: Jane
-    lastName: Doe
-    email: jd@example.com
-    password: jdTesting123
-  - username: jp
-    firstName: John
-    lastName: Public
-    email: jp@example.com
-    password: jpTesting123
+entrypoint_nginx:
+      - nginx 
+      - -g 
+      - 'daemon off;'

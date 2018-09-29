@@ -7,13 +7,15 @@
         name: init_install
     - include_role:
         name: setup_keycloak
-#    - include_role:
-#        name: install_code
-#    - include_role:
-#        name: build_code
-#    - include_role:
-#        name: load_courses
-#    - include_role:
-#        name: load_data
+    - include_role:
+        name: install_code
+    - include_role:
+        name: build_code
+    - include_role:
+        name: load_courses
+      when: load_courses  
+    - include_role:
+        name: load_data
+      when: load_data
     - include_role:
         name: prepare_runtime

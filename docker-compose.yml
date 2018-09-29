@@ -19,6 +19,32 @@ services:
     networks:
       - exlskills
 
+  exlcode-ide:
+    container_name: exlcode-ide.exlskills
+    build:
+      context: /home/ubuntu/exlskills-dev/exlcode-ide
+    ports:
+      - 8100:80
+    entrypoint:
+      - nginx
+      - -g
+      - daemon off;
+    networks:
+      - exlskills
+
+  exlcode-repl:
+    container_name: exlcode-repl.exlskills
+    build:
+      context: /home/ubuntu/exlskills-dev/exlcode-repl
+    ports:
+      - 8181:80
+    entrypoint:
+      - nginx
+      - -g
+      - daemon off;
+    networks:
+      - exlskills
+
   gql-server:
     container_name: gql-server.exlskills
     image: node:8

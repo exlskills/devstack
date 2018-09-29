@@ -4,7 +4,7 @@
 
 - name: template run-image-dev
   template:
-    src: gen_node_server/run-image-dev.yml.j2
+    src: generic_node_server/run-image-dev.yml.j2
     dest: "../compose_fragments/{{ project_config.name }}.yml"
   vars:
     config: "{{ project_config }}"
@@ -12,7 +12,7 @@
 
 - name: template run-image-prod
   template:
-    src: gen_node_server/run-image-prod.yml.j2
+    src: generic_node_server/run-image-prod.yml.j2
     dest: "../compose_fragments/{{ project_config.name }}.yml"
   vars:
     config: "{{ project_config }}"
@@ -20,7 +20,7 @@
 
 - name: template pull-image
   template:
-    src: gen_node_server/pull-image.yml.j2
+    src: generic_node_server/pull-image.yml.j2
     dest: "../compose_fragments/{{ project_config.name }}.yml"
   vars:
     config: "{{ project_config }}"

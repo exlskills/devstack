@@ -27,6 +27,7 @@ service_setup_method
 | void | Service is not created. Use, e.g., when running manually via IDE or terminal       |
 | run-image-dev | A base image is started to serve code in dev mode, e.g., Node image running `npm run start` |
 | run-image-prod | Similar to `run-image-dev`, but serve objects built for production use |
+| build-image | Build image in `docker-compose` process using the Dockerfile provided and run it |
 | pull-image | Pull a specific image and start, e.g., a prebuilt image from docker hub |  
 
 
