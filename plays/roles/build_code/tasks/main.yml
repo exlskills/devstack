@@ -21,4 +21,3 @@
   when: 
     - exlcode_ide_proj_config is defined
     - exlcode_ide_proj_config.clone_repo
-    - exlcode_ide_proj_config.clone_repo == "yes"

@@ -7,8 +7,13 @@ services:
   
   installer:
     container_name: installer.exlskills
-    image: exl-ansible-base
-    user: ubuntu
+    build:
+      context: docker_images/devstack_installer_user
+      args:
+        UNAME: ${EXL_DEVSTACK_USER}
+        UID: ${EXL_DEVSTACK_UID}
+        GID: ${EXL_DEVSTACK_GID}
+    user: ${EXL_DEVSTACK_USER}
     networks:
       - exlskills  
     depends_on:
@@ -16,11 +21,11 @@ services:
       - mongodb
     working_dir: /hostlink
     environment:
-      CODE_BASE_HOST_PATH: ${DEVSTACK_WORKSPACE}
+      CODE_BASE_HOST_PATH: ${EXL_DEVSTACK_WORKSPACE}
     volumes:
       - ./:/hostlink
-      - ${DEVSTACK_WORKSPACE}:/exlskills
-      /etc/localtime:/etc/localtime:ro
+      - ${EXL_DEVSTACK_WORKSPACE}:/exlskills
+      - /etc/localtime:/etc/localtime:ro
 
   keycloak:
     container_name: keycloak.exlskills

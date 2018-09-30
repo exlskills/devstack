@@ -19,6 +19,8 @@ Other Dependencies:
 
 ## Full Devstack Set
 
+TODO: WIP !
+
 ### 
 service_setup_method
 
@@ -30,7 +32,7 @@ service_setup_method
 | build-image | Build image in `docker-compose` process using the Dockerfile provided and run it |
 | pull-image | Pull a specific image and start, e.g., a prebuilt image from docker hub |  
 
-
+export COMPOSE_IGNORE_ORPHANS=1 
 
 
 ## Basic Compose Set 

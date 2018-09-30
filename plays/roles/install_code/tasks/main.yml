@@ -5,7 +5,7 @@
     dest: "/exlskills/{{ item.folder }}"
     force: yes
   loop: "{{ projects_in_scope }}"
-  when: item.clone_repo is defined and item.clone_repo == "yes"
+  when: item.clone_repo is defined and item.clone_repo
 
 - name: Create Process Config Files
   template:
@@ -42,7 +42,6 @@
   when: 
     - exlcode_ide_proj_config is defined
     - exlcode_ide_proj_config.clone_repo
-    - exlcode_ide_proj_config.clone_repo == "yes"
 
 - name: Run 'npm install'
   npm:
