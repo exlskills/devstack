@@ -16,13 +16,119 @@ Other Dependencies:
 - Docker
 - Docker compose (https://docs.docker.com/compose/install)
 
+### Disk Space
 
-## Full Devstack Set
+- allow 5Gb for Docker Image storage 
+- 2Gb+ for Development code with `node_modules` and builds
 
-TODO: WIP !
+## Installation
 
-### 
-service_setup_method
+- Designate an existing user id on the local machine to perform the devstack work, e.g., `ubuntu`. All folders and components will be set up under the ownership of this user id
+- Login with or switch to the user id 
+- Create a "base" directory for EXLskills Devstack projects; enter the directory, e.g.
+```
+mkdir ~/exlskills-dev
+cd ~/exlskills-dev
+```
+- Clone this repository into the `devstack` folder under the "base" directory and enter the folder:
+```
+git clone https://github.com/exlskills/devstack
+cd devstack
+```
+- Copy `.default.env` file into `.env` and update its content to reflect the folder and user selected. This file is used by `docker-compose` to map the data during the installation. Per `docker-compose` standard, the content should be in the form of `KEY=VALUE` lines
+```
+cp .default.env .env
+vm .env
+```
+The content of `.env` file should be as follows:
+
+| Variable Name | Sample Value | Description |
+|----------|----------|----------|
+|EXL_DEVSTACK_WORKSPACE|/home/ubuntu/exlskills-dev|full path of the devstack base installation directory|
+|EXL_DEVSTACK_USER|ubuntu|local user to work with the devstack|
+|EXL_DEVSTACK_UID|1000|"uid" of the user - find using `id` command, e.g., `id ubuntu`|
+|EXL_DEVSTACK_GID|1000|"gid" of the user's group - as returned by the `id` command|
+- Set `docker-compose` environment flag to suppress warnings when using `up` command in stages:
+```
+export COMPOSE_IGNORE_ORPHANS=1
+```
+- Create a folder for MongoDB data to ensure it is owned by the local user
+```
+mkdir var-lib-mongodb
+```
+- Review and update `plays/config/network_footprint.yml` configuration file to assigns ports to the devstack services that are not already in use on the local machine
+```
+vi plays/config/network_footprint.yml
+```
+The file defines the following parameters: 
+
+`host_dockernetwork_ip` - in standard docker networking, the value is `172.17.0.1`. See `docker_compose` below for additional considerations  
+`ports_on_host` - the list of local machine ports to assign to EXLdevstack individual services  
+`docker_compose` values for `network_name` and `domain_suffix` - as there may be other `docker-compose` projects running on the local machine, the network naming and configuraton may need to be adjusted to avoid any potential overlaps  
+- From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
+```
+docker-compose -f docker-compose-ini.yml build
+```
+- Review and update `plays/config/stack_scope.yml` configuration file that contains setup information for the individual services and project in the devstack's scope. See "Devstack Scope Configuration" below for detailed information. Note, that this configuration can be changed and reapplied anytime after the installation, so the suggested default can be sufficient for the initial setup 
+```
+vi plays/config/stack_scope.yml
+```
+- Create and start the `installer`, `keycloak`, `mongodb` and `memcached` devstack support services. Note, this will not kick off the installation process just yet: 
+```
+docker-compose -f docker-compose-ini.yml up -d
+```
+- Log in to the `bash shell` of the installer container and run the installation  
+```
+docker-compose -f docker-compose-ini.yml exec installer bash
+```
+or 
+```
+docker exec -it installer.exlskills bash
+``` 
+The `bash` starts in `/hostlink` directory on the container, which is mapped to the `devstack` folder on the host  
+Run the installation (this will execute the Ansible process and output detailed information to the console):
+```
+. /install-devstack.sh
+```
+As the Ansible successfully completes (zero `failed` count in the summary), `docker-compose.yml` will be created in the `devstack` folder on the host. Exit the installer's `bash` and review the file
+```
+exit
+vi docker-compose.yml
+```
+- If the generated `docker-compose.yml` file contains `build` directives (it will, in the default configuration), run the `docker-compose` `build` process. Note, the `-f` parameter used in the earlier steps is not needed anymore when working with services described in the default `docker-compose.yml` file: 
+```
+docker-compose build
+```
+- Create and start the core devstack services: 
+```
+docker-compose up -d
+```
+This completes the installation. Devstack state after the installation:  
+- all repositories in scope have been cloned into corresponding folders under the base devstack local machine directory
+- npm packages have been loaded, applicable builds executed
+- keycloak client has been configured and test users created as per `plays/config/stack_scope.yml` `test_users` section
+- mongo db has been initiated and loaded with the required (minimal) configuration data
+- courses have been loaded as per `plays/config/stack_scope.yml` `courses_to_load` section
+- other test data load is TBD-WIP
+- EXLskills services have been running and accessible on the `localhost` at ports per `plays/config/network_footprint.yml` `ports_on_host` section
+
+### Running
+(use the port specified in `plays/config/network_footprint.yml` `ports_on_host` `web_client`)
+```
+http://localhost:4000
+```
+
+### Installer Service
+
+After the installation completion, the `installer` service can be left running or stopped. In the idle state, it appears not taking up any resources. The role of the `installer` service in the devstack's lifecycle is to be documented (TODO) 
+To stop the service: 
+```
+docker-compose -f docker-compose-ini.yml stop
+``` 
+
+### Devstack Scope Configuration
+TODO - WIP 
+#### service_setup_method
 
 | Value | Service Setup Logic |
 |----------|----------|
@@ -32,7 +138,6 @@ service_setup_method
 | build-image | Build image in `docker-compose` process using the Dockerfile provided and run it |
 | pull-image | Pull a specific image and start, e.g., a prebuilt image from docker hub |  
 
-export COMPOSE_IGNORE_ORPHANS=1 
 
 
 ## Basic Compose Set 

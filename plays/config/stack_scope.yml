@@ -83,8 +83,6 @@ projects_in_scope:
 courses_to_load:
   - repo: https://github.com/exlskills/course-java-basics.git
     folder: course-java-basics
-  - repo: https://github.com/exlskills/course-python-introduction.git
-    folder: course-python-introduction  
 
 test_users:
   - username: jd

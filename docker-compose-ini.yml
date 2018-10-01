@@ -43,6 +43,8 @@ services:
     image: mongo:3.6.7
     ports:
       - 27117:27017
+    volumes:  
+      - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mongodb:/var/lib/mongodb
     networks:
       - exlskills      
 
