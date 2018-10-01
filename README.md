@@ -23,7 +23,7 @@ Other Dependencies:
 
 ## Installation
 
-- Designate an existing user id on the local machine to perform the devstack work, e.g., `ubuntu`. All folders and components will be set up under the ownership of this user id
+- Designate an existing user id on the local machine to perform the devstack work under, e.g., `ubuntu`. All folders and components will be set up with the ownership of this user 
 - Login with or switch to the user id 
 - Create a "base" directory for EXLskills Devstack projects; enter the directory, e.g.
 ```
@@ -32,7 +32,7 @@ cd ~/exlskills-dev
 ```
 - Clone this repository into the `devstack` folder under the "base" directory and enter the folder:
 ```
-git clone https://github.com/exlskills/devstack
+git clone https://github.com/exlskills/devstack -b master devstack  
 cd devstack
 ```
 - Copy `.default.env` file into `.env` and update its content to reflect the folder and user selected. This file is used by `docker-compose` to map the data during the installation. Per `docker-compose` standard, the content should be in the form of `KEY=VALUE` lines
@@ -48,13 +48,17 @@ The content of `.env` file should be as follows:
 |EXL_DEVSTACK_USER|ubuntu|local user to work with the devstack|
 |EXL_DEVSTACK_UID|1000|"uid" of the user - find using `id` command, e.g., `id ubuntu`|
 |EXL_DEVSTACK_GID|1000|"gid" of the user's group - as returned by the `id` command|
+|KEYCLOAK_HOST_PORT|8082|an available local machine port to expose devstack Keycloak service on| 
+|MONGO_HOST_PORT|27117|an available local machine port to expose devstack MongoDB service on|
+|MEMCACHED_HOST_PORT|11211|an available local machine port to expose devstack Memcached service on|
+
 - Set `docker-compose` environment flag to suppress warnings when using `up` command in stages:
 ```
 export COMPOSE_IGNORE_ORPHANS=1
 ```
-- Create a folder for MongoDB data to ensure it is owned by the local user
+- Create a subfolder for MongoDB data in the base directory (optional, done to ensure that it is owned by the local user) 
 ```
-mkdir var-lib-mongodb
+mkdir -p ../data/var-lib-mongodb
 ```
 - Review and update `plays/config/network_footprint.yml` configuration file to assigns ports to the devstack services that are not already in use on the local machine
 ```
@@ -65,6 +69,10 @@ The file defines the following parameters:
 `host_dockernetwork_ip` - in standard docker networking, the value is `172.17.0.1`. See `docker_compose` below for additional considerations  
 `ports_on_host` - the list of local machine ports to assign to EXLdevstack individual services  
 `docker_compose` values for `network_name` and `domain_suffix` - as there may be other `docker-compose` projects running on the local machine, the network naming and configuraton may need to be adjusted to avoid any potential overlaps  
+
+(NOTE: in the current design, some of this information is duplicated in `docker-compose-ini.yml` and has to be updated in both places:  
+`docker-compose` network name and domain suffix)   
+
 - From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
 ```
 docker-compose -f docker-compose-ini.yml build
@@ -73,6 +81,9 @@ docker-compose -f docker-compose-ini.yml build
 ```
 vi plays/config/stack_scope.yml
 ```
+(NOTE: in the current design, some of this information is duplicated in `.env` and has to be updated in both places:  
+Keycloak, mongo and memcached ports on the local machine   ) 
+
 - Create and start the `installer`, `keycloak`, `mongodb` and `memcached` devstack support services. Note, this will not kick off the installation process just yet: 
 ```
 docker-compose -f docker-compose-ini.yml up -d
@@ -90,7 +101,8 @@ Run the installation (this will execute the Ansible process and output detailed 
 ```
 . /install-devstack.sh
 ```
-As the Ansible successfully completes (zero `failed` count in the summary), `docker-compose.yml` will be created in the `devstack` folder on the host. Exit the installer's `bash` and review the file
+The process takes about 15 minutes.  
+As the Ansible steps successfully complete (zero `failed` count in the `PLAY RECAP`), `docker-compose.yml` file will be created in the `devstack` folder on the host. Exit the installer's `bash` and review the file
 ```
 exit
 vi docker-compose.yml
