@@ -2,7 +2,7 @@
 mongo_uri: "mongodb://{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
 mongo_db: exldev  
 
-memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
+memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.memcached }}"
 
 stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
 
