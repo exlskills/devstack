@@ -9,7 +9,7 @@ Operating Systems:
 
 - Ubuntu 16.04
 - OS X 10.13+
-- Windows has not been thoroughly tested, although it has worked and should work... Windows-related contributions are welcome
+- Windows has not been addressed yet, although it should work, conceptually. Windows-related contributions are welcome
 
 Other Dependencies:
 
@@ -21,9 +21,23 @@ Other Dependencies:
 - allow 5Gb for Docker Image storage 
 - 2Gb+ for Development code with `node_modules` and builds
 
+## Overview
+
+As EXLskills stack is comprised of multiple independently running components, development and testing of an individual component requires a proper orchestrating of the entire dev runtime environment. The philosophy behind the EXLskills devstack is as follows: 
+- "(next to) zero" local software requirements - just a common dev box OS and Docker with Docker compose. No complex prerequisites to install, maintain and upgrade locally, no versioning or port conflicts with other projects
+- direct access to the code from the local machine's console and IDE of choice
+- easy switch between the Development (the code is being worked on) vs. Auxiliary (supporting the stack runtime) mode for each given component - one install can be used for Front End and/or Back End components' development, seamlessly
+- full clarity of what, where and how is installed - traceable via discrete configuration files and easily understood, human-readable code snippets. Here comes the use of simplified Ansible playbooks over convoluted shell scripting run via a Makefile    
+
+NOTE: knowledge of Ansible is not required to configure, use and maintain this project. See "Ansible Playbook Structure Overview" below for a simple explanation of the installer code structure. The approach taken is to keep the Ansible code simple, straight-forward and as free of tricks and obscure operations as possible 
+
+The entire installation process is carried out by a designated `installer` container, which is a part of the "initialization" block of the stack's Docker compose services (`devstack/docker-compose-ini.yml`). The container is built from `exlskills/devstack-installer-base` Ubuntu 16.04 image, which comes with all the standard software required for the stack's components installation. Note, that the image is loaded with specific versions of the software and should be re-built as requirements change. The size of the image is just under 2Gb.  
+Within the running stack, the base image is further updated (see `devstack/docker_images/devstack_installer_user/Dockerfile`) to match its User with the local machine's User, so that the latter gets the ownership of the installed stack's components.   
+The `installer` container has a volume share mapped to the designated local folder, where this repository is initially cloned into as a subdirectory, so that the installer has access to the Ansible code. All repositories in scope then subsequently are cloned into the same designated local wrapper folder by the `installer` process.          
+
 ## Installation
 
-- Designate an existing user id on the local machine to perform the devstack work under, e.g., `ubuntu`. All folders and components will be set up with the ownership of this user 
+- Chose an existing user id on the local machine to perform the devstack work under, e.g., `ubuntu`. All folders and components will be set up with the ownership of this user 
 - Login with or switch to the user id 
 - Create a "base" directory for EXLskills Devstack projects; enter the directory, e.g.
 ```
@@ -132,14 +146,36 @@ http://localhost:4000
 
 ### Installer Service
 
-After the installation completion, the `installer` service can be left running or stopped. In the idle state, it appears not taking up any resources. The role of the `installer` service in the devstack's lifecycle is to be documented (TODO) 
-To stop the service: 
+After the installation completion, the `installer` service can be left running or stopped. In the idle state, it does not appear to be taking up any resources (not counting the size of its relatively large image as mentioned above, which cannot be purged till the container is destroyed).  
+The `installer` service can be utilized to run refreshes, rebuilds, reloads, etc., vs. executing those on the local machine.   
+To stop the service, run form the local machine's `devstack/` folder: 
 ```
 docker-compose -f docker-compose-ini.yml stop
 ``` 
 
+### Stopping (Restarting) Individual Services
+Services may need to be stopped, e.g., when the corresponding server is under developed and being run from the local IDE. To stop a service, run form the local machine's `devstack/` folder:  
+```
+docker-compose stop <service name as in docker-compose.yml>
+``` 
+This doesn't remove the container, just releases the host's port the service was operating on. The container can be started back by using the `start` keyword. Depending on how the container's service is set up, the restart may or may not cause the code reload - this should be reviewed individually for each container  
+
+### Refreshing Services
+After the underlying code and/or configuration update, a service can be "refreshed" by simply restarting it, if it is configured to read code/configuration at startup, or by recreating the container. Run form the local machine's `devstack/` folder:  
+```
+docker-compose up -d --force-recreate <service name as in docker-compose.yml>
+```
+To recreate all services:
+```
+docker-compose up -d --force-recreate 
+```
+
 ### Devstack Scope Configuration
-TODO - WIP 
+See `devstack/plays/config/stack_scope.yml` 
+
+Most of the parameters and values in this YAML file are "hardcoded" in the sense that they are used to drive the preset installation logic vs. configure it. If an entire component is removed (or commented out with `#` in each line) - it will not be installed.  
+The following parameters can be used to configure component's installation: 
+   
 #### service_setup_method
 
 | Value | Service Setup Logic |
@@ -150,9 +186,25 @@ TODO - WIP
 | build-image | Build image in `docker-compose` process using the Dockerfile provided and run it |
 | pull-image | Pull a specific image and start, e.g., a prebuilt image from docker hub |  
 
+#### clone_repo 
+If set to `no`, `git clone` of the component's repository will be bypassed. Otherwise, the latest origin is always pulled. 
+ 
+#### prebuilt_image   
+Used in combination with `service_setup_method` set to `pull-image` 
 
+## Ansible Playbook Structure Overview
+All Ansible code is located in the `plays/` folder.  
+- `base-install.yml` - the "playbook" that executes a number of "tasks" in "roles" on the `installer` container (see `hosts: 127.0.0.1` and `connection: local` at the top)
+- each role's code is located in a separate folder with the role's name under `plays/roles/` directory
+- the configuration for review and update is in the YAML files in `plays/config` folder. The keys listed in there are referred to in the other parts of code usually inside of `"{{ }}"`  
+- each role's folder has a `tasks/` directory with `main.yaml` file that is run when the role is "included" from `base-install.yml` playbook. Optionally, other YAML files can be present in the folder - those are called from the `main.yaml`, e.g., inside loops or conditional flows  
+- roles' `defaults/` folders contain additional variables used in the role's logic. `templates/` contain Jinja templates used to generate text files, e.g., `.env` files for the stack's services, using variables and runtime values (`facts`) 
+- `files/` folders contain objects copied as-is into the destination by the process logic 
+- The process is executed by calling `ansible-playbook` from the `installer` shell (see `devstack/docker_images/devstack_installer_base/install-devstack.sh`). The names of each of the `config/` YAML files are passed as the sequential arguments, in the order of the variables assignment, followed by the name of the playbook. The `-vvv` is used to enable detailed console output for review and troubleshooting if needed        
 
-## Basic Compose Set 
+## Basic Compose Set
+
+DEPRECATED - do not use 
 
 ### Installation
 
