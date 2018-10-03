@@ -8,7 +8,7 @@ ARG GID=1000
 
 COPY ./setup-user.yml /
 
-ansible-playbook -vvv -e host_gid=${GID} -e host_user=${UNAME} -e host_uid=${UID} /setup-user.yml
+RUN ansible-playbook -vvv -e host_gid=${GID} -e host_user=${UNAME} -e host_uid=${UID} /setup-user.yml
 
 USER $UNAME
 
