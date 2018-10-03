@@ -21,6 +21,19 @@ Other Dependencies:
 - allow 5Gb for Docker Image storage 
 - 2Gb+ for Development code with `node_modules` and builds
 
+### Memory
+Please allow enough memory for the Browser client and IDE.  
+The recommendations below are approximate. Use `docker stats` to view the actual usage by service  
+
+- Devstack installer container during the installation - under 1Gb
+
+- Devstack components total at runtime - under 2Gb 
+  * Keycloak container - 512Mb
+  * MongoDB container - 256Mb
+  * 3 generic NodeJS server containers - 600Mb combined
+  * Other - insignificant
+     
+
 ## Overview
 
 As EXLskills stack is comprised of multiple independently running components, development and testing of an individual component requires a proper orchestrating of the entire dev runtime environment. The philosophy behind the EXLskills devstack is as follows: 

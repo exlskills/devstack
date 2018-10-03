@@ -1,4 +1,4 @@
-plays/*.retry
+*.retry
 docker-compose.yml
 compose_fragments/
 

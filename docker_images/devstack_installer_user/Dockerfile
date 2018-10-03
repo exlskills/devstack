@@ -6,10 +6,9 @@ ARG UNAME=ubuntu
 ARG UID=1000
 ARG GID=1000
 
-# Create image user, group; set as sudo - no password; change ownership of the scripts
-RUN groupadd -g $GID $UNAME && useradd -m -u $UID -g $GID -s /bin/bash $UNAME && usermod -aG sudo $UNAME && \
-    echo "$UNAME ALL=(ALL) NOPASSWD:ALL" | EDITOR='tee -a' visudo && \
-    chown $UNAME:$UNAME /install-devstack.sh && chown $UNAME:$UNAME /zero-daemon.sh
+COPY ./setup-user.yml /
+
+ansible-playbook -vvv -e host_gid=${GID} -e host_user=${UNAME} -e host_uid=${UID} /setup-user.yml
 
 USER $UNAME
 

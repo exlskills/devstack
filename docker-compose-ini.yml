@@ -25,6 +25,7 @@ services:
     volumes:
       - ./:/hostlink
       - ${EXL_DEVSTACK_WORKSPACE}:/exlskills
+# TODO: for Mac this must be changed
       - /etc/localtime:/etc/localtime:ro
 
   keycloak:
