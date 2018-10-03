@@ -146,11 +146,16 @@ http://localhost:4000
 
 ### Installer Service
 
-After the installation completion, the `installer` service can be left running or stopped. In the idle state, it does not appear to be taking up any resources (not counting the size of its relatively large image as mentioned above, which cannot be purged till the container is destroyed).  
+After the installation completion, the `installer` service can be left running or stopped. In the idle state, it does not take up any resources (not counting the size of its relatively large image as mentioned above, which cannot be purged till the container is destroyed). However, the memory acquired during the installation is not released till the `installer` is restarted.     
 The `installer` service can be utilized to run refreshes, rebuilds, reloads, etc., vs. executing those on the local machine.   
 To stop the service, run form the local machine's `devstack/` folder: 
 ```
-docker-compose -f docker-compose-ini.yml stop
+docker-compose -f docker-compose-ini.yml stop installer
+``` 
+
+To release the memory and keep the service available, run form the local machine's `devstack/` folder: 
+```
+docker-compose -f docker-compose-ini.yml restart installer
 ``` 
 
 ### Stopping (Restarting) Individual Services

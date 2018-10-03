@@ -8,7 +8,6 @@ stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
 
 keycloak_client_id: exlskills
 keycloak_realm: exlinc
-keycloak_host_url: "http://localhost:{{ ports_on_host.keycloak }}"
 
 node_base_image: node:8
 
