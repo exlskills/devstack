@@ -98,7 +98,9 @@ The file defines the following parameters:
 `docker_compose` values for `network_name` and `domain_suffix` - as there may be other `docker-compose` projects running on the local machine, the network naming and configuraton may need to be adjusted to avoid any potential overlaps  
 
 (NOTE: in the current design, some of this information is duplicated in `docker-compose-ini.yml` and has to be updated in both places:  
-`docker-compose` network name and domain suffix)   
+`docker-compose` network name and domain suffix)  
+   
+- On Mac / OS, edit `docker-compose-ini.yml`: comment out with `#` or delete `- /etc/localtime:/etc/localtime:ro`
 
 - From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
 ```
@@ -219,6 +221,13 @@ All Ansible code is located in the `plays/` folder.
 - roles' `defaults/` folders contain additional variables used in the role's logic. `templates/` contain Jinja templates used to generate text files, e.g., `.env` files for the stack's services, using variables and runtime values (`facts`) 
 - `files/` folders contain objects copied as-is into the destination by the process logic 
 - The process is executed by calling `ansible-playbook` from the `installer` shell (see `devstack/docker_images/devstack_installer_base/install-devstack.sh`). The names of each of the `config/` YAML files are passed as the sequential arguments, in the order of the variables assignment, followed by the name of the playbook. The `-vvv` is used to enable detailed console output for review and troubleshooting if needed        
+
+### Removing Devstack
+```
+docker-compose -f docker-compose-ini.yml down
+
+```
+Then delete the directories and remove the images  
 
 ## Basic Compose Set
 
