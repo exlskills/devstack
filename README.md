@@ -213,7 +213,7 @@ If set to `no`, `git clone` of the component's repository will be bypassed. Othe
 Used in combination with `service_setup_method` set to `pull-image` 
 
 ## Ansible Playbook Structure Overview
-All Ansible code is located in the `plays/` folder.  
+Ansible code is located in the `plays/` folder.  
 - `base-install.yml` - the "playbook" that executes a number of "tasks" in "roles" on the `installer` container (see `hosts: 127.0.0.1` and `connection: local` at the top)
 - each role's code is located in a separate folder with the role's name under `plays/roles/` directory
 - the configuration for review and update is in the YAML files in `plays/config` folder. The keys listed in there are referred to in the other parts of code usually inside of `"{{ }}"`  
@@ -229,25 +229,6 @@ docker-compose -f docker-compose-ini.yml down
 ```
 Then delete the directories and remove the images  
 
-## Basic Compose Set
-
-DEPRECATED - do not use 
-
-### Installation
-
-```
-git clone https://github.com/exlskills/devstack
-
-cd devstack/basic-compose-set
-
-npm install
-
-```
-
-### Running
-
-- To start up the whole backend nstack, run ```docker-compose up -d```
-- To import database dump, run ```node tasks/seed --db db_uri --dump dump_folder```. If ```db_uri``` is not specified, ```mongodb://localhost:27017/webph2_dev``` is used.
 
 ## License
 
