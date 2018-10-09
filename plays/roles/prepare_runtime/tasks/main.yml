@@ -1,4 +1,9 @@
 ---
+- name: Create compose_fragments directory
+  file: 
+      path: ../compose_fragments
+      state: directory
+
 - name: Prepare docker-compose.yml header
   template:
     src: 0-docker-compose-header.yml.j2

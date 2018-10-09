@@ -16,7 +16,7 @@ RUN apt-get install -y autoconf automake python-dev libssl-dev libtool pkg-confi
     ./configure && \
     make && make install
 
-# Add repositories for and install Ansible, GoLang Yarn, MongoDB
+# Add repositories for and install Ansible, GoLang, Yarn, MongoDB
 RUN apt-add-repository ppa:ansible/ansible && \
     add-apt-repository ppa:gophers/archive && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
@@ -36,7 +36,8 @@ RUN apt-get install -y python-jmespath libx11-dev
 
 COPY ./install-devstack.sh /
 COPY ./zero-daemon.sh /
+COPY ./load-course.sh /
 
-RUN chmod +x /install-devstack.sh && chmod +x /zero-daemon.sh
+RUN chmod +x /install-devstack.sh && chmod +x /zero-daemon.sh && chmod +x /load-course.sh
 
 CMD ["/zero-daemon.sh"]

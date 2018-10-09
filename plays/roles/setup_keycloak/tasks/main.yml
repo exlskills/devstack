@@ -9,7 +9,7 @@
       password: "{{ admin_password }}"
       grant_type: "password"
   register: process_token
-  no_log: True
+#  no_log: True
   
 #- debug:
 #    var: process_token

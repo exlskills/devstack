@@ -13,3 +13,4 @@
       - start
     networks:
       - {{ docker_compose.network_name }}
+    restart: unless-stopped

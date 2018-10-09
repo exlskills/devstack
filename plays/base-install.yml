@@ -13,7 +13,7 @@
         name: build_code
     - include_role:
         name: load_courses
-      when: load_courses  
+      when: load_courses
     - include_role:
         name: load_data
       when: load_data

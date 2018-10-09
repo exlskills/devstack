@@ -1,0 +1,91 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+    # Check if a Group exists with the Host's GID
+    - getent:
+        database: group
+        split: ':'
+    #- debug:
+    #    var: getent_group
+    - set_fact:
+        group_found: no
+        group_name: "{{ host_user }}"
+        user_found: no
+        uid_match: no
+    - set_fact:
+        group_found: yes
+      when: item.value[1] == host_gid
+      loop: "{{ q('dict', getent_group) }}"
+    - debug:
+       msg: "Group with GID {{ host_gid }} already exists in the image - {{ group_found }}"
+    - set_fact:
+        group_name: "{{ item.key }}"
+      when:
+        - group_found
+        - item.value[1] == host_gid
+      loop: "{{ q('dict', getent_group) }}"
+    - debug:
+        msg: "Group name: {{ group_name }}"
+
+    # Check if the User exists in the image and if yes, the UID matches
+    - getent:
+        database: passwd
+        key: "{{ host_user }}"
+        fail_key: no
+    - debug:
+        var: getent_passwd
+    - set_fact:
+        user_found: yes
+      when: item.value
+      loop: "{{ q('dict', getent_passwd) }}"
+    - debug:
+        msg: "User {{ host_user }} already exists in the image - {{ user_found }}"
+    - set_fact:
+        uid_match: yes
+      when:
+        - user_found
+        - item.value[1] == host_uid
+      loop: "{{ q('dict', getent_passwd) }}"
+    - debug:
+        msg: "Host UID {{ host_uid }} matches UID in the image - {{ uid_match }}"
+    - assert:
+        that: uid_match
+        msg: "User exists in the image but with a different UID. Pick a different local User"
+      when: user_found
+
+    - name: Create Group
+      group:
+        name: "{{ host_user }}"
+        gid: "{{ host_gid }}"
+      when: not group_found
+
+    - name: Create user account
+      user:
+        name: "{{ host_user }}"
+        uid: "{{ host_uid }}"
+        groups:
+          - "{{ group_name }}"
+          - sudo
+        shell: /bin/bash
+        non_unique: yes
+      when: not user_found
+
+    - name: Allow no password sudo for the user
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: "{{ host_user }} ALL=(ALL) NOPASSWD:ALL"
+        validate: 'visudo -cf %s'
+      when: not host_user == "root"
+
+    - name: Set file owner for scripts
+      file:
+        path: "{{ item }}"
+        owner: "{{ host_uid }}"
+        group: "{{ host_gid }}"
+      with_items:
+        - /install-devstack.sh
+        - /zero-daemon.sh
+        - /load-course.sh

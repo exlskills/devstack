@@ -1,0 +1,25 @@
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Get Destination - Step 1
+      set_fact:
+        clone_dest: "{{ course_repo_url.split('/')[-1] }}"
+    - name: Get Destination - Step 2
+      set_fact:
+        clone_dest: "{{ clone_dest.split('.')[0] }}"
+
+    - name: Clone Course Repositories
+      git:
+        repo: "{{ course_repo_url }}"
+        dest: "/exlskills/courses/{{ clone_dest }}"
+        force: yes
+      when: clone_course_repo
+
+    - name: Load Course into DB
+      include_role:
+        name: load_courses
+        tasks_from: convert_and_load_course.yml
+      vars:
+        course_folder: "/exlskills/courses/{{ clone_dest }}"
+        stop_on_conversion_error: "Yes"

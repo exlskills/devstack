@@ -33,8 +33,9 @@
   loop: "{{ courses_to_load }}"    
 
 - name: Load Courses into DB
-  include_tasks: load_course.yml
+  include_tasks: convert_and_load_course.yml
   vars:
     course_folder: "/exlskills/courses/{{ item.folder }}"
+    suppress_conversion_error: "Yes"
   loop: "{{ courses_to_load }}"    
   

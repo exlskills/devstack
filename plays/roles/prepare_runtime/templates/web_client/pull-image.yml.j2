@@ -8,3 +8,4 @@
       - {{ codebase_hostpath }}/{{ config.folder }}/{{ config.config_file }}
     networks:
       - {{ docker_compose.network_name }}
+    restart: unless-stopped
