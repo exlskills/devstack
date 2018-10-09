@@ -9,3 +9,4 @@
       - {{ codebase_hostpath }}/{{ config.folder }}/nginx_config:/etc/nginx:ro
     networks:
       - {{ docker_compose.network_name }}
+    restart: unless-stopped

@@ -16,7 +16,7 @@ RUN apt-get install -y autoconf automake python-dev libssl-dev libtool pkg-confi
     ./configure && \
     make && make install
 
-# Add repositories for and install Ansible, GoLang Yarn, MongoDB
+# Add repositories for and install Ansible, GoLang, Yarn, MongoDB
 RUN apt-add-repository ppa:ansible/ansible && \
     add-apt-repository ppa:gophers/archive && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \

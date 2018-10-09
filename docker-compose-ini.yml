@@ -22,11 +22,13 @@ services:
     working_dir: /hostlink
     environment:
       CODE_BASE_HOST_PATH: ${EXL_DEVSTACK_WORKSPACE}
+      MGO_DB_NAME: ${MONGO_DB_NAME}
     volumes:
       - ./:/hostlink
       - ${EXL_DEVSTACK_WORKSPACE}:/exlskills
 # TODO: for Mac this must be changed
       - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
 
   keycloak:
     container_name: keycloak.exlskills
@@ -34,10 +36,34 @@ services:
     ports:
       - ${KEYCLOAK_HOST_PORT}:8080
     networks:
-      - exlskills  
+      - exlskills
+    depends_on:
+      - mysql
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: Pa55w0rd
+      DB_VENDOR: mysql
+      DB_ADDR: mysql.exlskills
+      DB_USER: devstack_user
+      DB_PASSWORD: devstack_pwd
+    restart: unless-stopped
+
+  mysql:
+    container_name: mysql.exlskills
+    image: mysql:5.7
+#    command: --sql_mode=""
+    ports:
+      - ${MYSQL_HOST_PORT}:3306
+    networks:
+      - exlskills
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Pa55w0rd'
+      MYSQL_USER: 'devstack_user'
+      MYSQL_PASSWORD: 'devstack_pwd'
+      MYSQL_DATABASE: 'keycloak'
+    volumes:
+      - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mysql:/var/lib/mysql
+    restart: unless-stopped
 
   mongodb:
     container_name: mongo.exlskills
@@ -48,6 +74,7 @@ services:
       - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mongodb:/var/lib/mongodb
     networks:
       - exlskills      
+    restart: unless-stopped
 
   memcached:
     container_name: memcached.exlskills
@@ -56,4 +83,4 @@ services:
       - ${MEMCACHED_HOST_PORT}:11211
     networks:
       - exlskills      
-
+    restart: unless-stopped

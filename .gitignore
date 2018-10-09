@@ -1,6 +1,7 @@
 *.retry
 docker-compose.yml
 compose_fragments/
+.config.yml
 
 .idea
 .vscode
