@@ -247,6 +247,10 @@ docker exec -it installer.exlskills bash
 
 The course will be cloned into `<EXL_DEVSTACK_WORKSPACE>/courses/` directory on the host and loaded into the database  
 
+## Exlcode IDE and REPL services
+
+Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the `web-client`. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE` 
+
 ### Running Conversion of Local Courses 
 
 To bypass the git clone step in the process, pass `false` as the flag's value, e.g.,  
