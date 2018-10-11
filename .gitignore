@@ -1,5 +1,6 @@
 *.retry
 docker-compose.yml
+docker-compose-ini.yml
 compose_fragments/
 .config.yml
 

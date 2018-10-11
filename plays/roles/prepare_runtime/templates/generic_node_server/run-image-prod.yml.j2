@@ -9,6 +9,7 @@
       - {{ codebase_hostpath }}/{{ config.folder }}:/app
     entrypoint:
       - npm
+      - run
       - start:production
     networks:
       - {{ docker_compose.network_name }}

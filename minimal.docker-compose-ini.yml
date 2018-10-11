@@ -1,0 +1,63 @@
+version: "3"
+
+networks:
+  exlskills:
+
+services:
+  
+  installer:
+    container_name: installer.exlskills
+    build:
+      context: docker_images/devstack_installer_user
+      args:
+        UNAME: ${EXL_DEVSTACK_USER}
+        UID: ${EXL_DEVSTACK_UID}
+        GID: ${EXL_DEVSTACK_GID}
+    user: ${EXL_DEVSTACK_USER}
+    networks:
+      - exlskills  
+    depends_on:
+      - keycloak
+      - mongodb
+    working_dir: /hostlink
+    environment:
+      CODE_BASE_HOST_PATH: ${EXL_DEVSTACK_WORKSPACE}
+      MGO_DB_NAME: ${MONGO_DB_NAME}
+    volumes:
+      - ./:/hostlink
+      - ${EXL_DEVSTACK_WORKSPACE}:/exlskills
+# TODO: for Mac this must be changed
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  keycloak:
+    container_name: keycloak.exlskills
+    image: jboss/keycloak
+    ports:
+      - ${KEYCLOAK_HOST_PORT}:8080
+    networks:
+      - exlskills
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+    restart: unless-stopped
+
+  mongodb:
+    container_name: mongo.exlskills
+    image: mongo:3.6.7
+    ports:
+      - ${MONGO_HOST_PORT}:27017
+    volumes:  
+      - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mongodb:/var/lib/mongodb
+    networks:
+      - exlskills      
+    restart: unless-stopped
+
+  memcached:
+    container_name: memcached.exlskills
+    image: memcached
+    ports:
+    - ${MEMCACHED_HOST_PORT}:11211
+    networks:
+    - exlskills
+    restart: unless-stopped

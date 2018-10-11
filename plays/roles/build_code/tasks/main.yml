@@ -1,4 +1,7 @@
 ---
+
+# NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
+
 - name: Run 'npm run build' 
   shell: npm run build
   args:
@@ -20,4 +23,5 @@
     chdir: "/exlskills/{{ exlcode_ide_proj_config.folder }}/exlcode"
   when: 
     - exlcode_ide_proj_config is defined
+    - exlcode_ide_proj_config.clone_repo is defined
     - exlcode_ide_proj_config.clone_repo

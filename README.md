@@ -61,6 +61,8 @@ Admin password and MySQL connection credentials are hardcoded in `docker-compose
 
 ## Installation
 
+NOTE: for the Minimal Configuration installation, see `docs/minimal-configuration-install.md` 
+
 - Chose an existing user id on the local machine to perform the devstack work under, e.g., `ubuntu`. All folders and components will be set up with the ownership of this user 
 - Login with or switch to the user id 
 - Create a "base" directory for EXLskills Devstack projects; enter the directory, e.g.
@@ -73,9 +75,14 @@ cd ~/exlskills-dev
 git clone https://github.com/exlskills/devstack -b master devstack  
 cd devstack
 ```
-- Copy `.default.env` file into `.env` and update its content to reflect the folder and user selected. This file is used by `docker-compose` to map the data during the installation. Per `docker-compose` standard, the content should be in the form of `KEY=VALUE` lines
+- Copy the following cloned files so that the local configuration is preserved during future updates: 
 ```
 cp .default.env .env
+cp .default.config.yml .config.yml 
+cp default.docker-compose-ini.yml docker-compose-ini.yml
+```
+- Review and update `.env` file which is used by `docker-compose` to map configuration and environment data during the installation. Per `docker-compose` standard, the content should be in the form of `KEY=VALUE` lines.   
+```
 vm .env
 ```
 The content of `.env` file should be as follows:
@@ -92,9 +99,8 @@ The content of `.env` file should be as follows:
 |MYSQL_HOST_PORT|3306|an available local machine port to expose devstack MySQL service on|
 |MONGO_DB_NAME|exldev|the name of the exlskills database to be created in the MongoDB service|
 
-Note, in the current design, some of the above information is duplicated in the `.config.yml` file (described below) and if changed - should be updated in both places 
+Note, in the current design, some of the above information is duplicated in the `.config.yml` file (described below) and if changed - should be updated in both places  
 
-- Copy `.default.config.yml` into `.config.yml`. This file contains parameters used by the installation process executed by the installer container  
 - Set `docker-compose` environment flag to suppress warnings when using `up` command in stages:
 ```
 export COMPOSE_IGNORE_ORPHANS=1
@@ -108,46 +114,45 @@ mkdir ../data/var-lib-mysql
 Note, when updating the stack, changes to MySQL service may not take effect unless `../data/var-lib-mysql` folder is removed (`sudo rm -rf ...`) and re-created 
 
 
-- Review and update the `NETWORK FOOTPRINT` section of `.config.yml` file to assigns ports to the devstack services that are not already in use on the local machine
+- Review and update `.config.yml` file which contains parameters used by the installation process executed by the installer container 
 ```
 vi .config.yml
 ```
-The section defines the following parameters: 
+
+`NETWORK FOOTPRINT` section defines the following parameters: 
 
 `host_dockernetwork_ip` - in standard docker networking, the value is `172.17.0.1`. See `docker_compose` below for additional considerations  
-`ports_on_host` - the list of local machine ports to assign to EXLdevstack individual services  
-`docker_compose` values for `network_name` and `domain_suffix` - as there may be other `docker-compose` projects running on the local machine, the network naming and configuraton may need to be adjusted to avoid any potential overlaps  
+`ports_on_host` - the list of local machine ports to assign to EXLdevstack individual services. Ensure those are available or change as needed   
+`docker_compose` values for `network_name` and `domain_suffix` - as there may be other `docker-compose` projects running on the local machine, the network naming and configuraton may need to be adjusted to avoid any potential overlaps   
 
 (NOTE: in the current design, some of this information is duplicated in `docker-compose-ini.yml` and has to be updated in both places:  
 `docker-compose` network name and domain suffix)  
-   
-- On Mac / OS, edit `docker-compose-ini.yml`: comment out with `#` or delete `- /etc/localtime:/etc/localtime:ro`
+
+`STACK SCOPE` section contains setup information for the individual services and project in the devstack's scope. See "Devstack Scope Configuration" below for detailed information. Note, that this configuration can be changed and reapplied anytime after the installation, so the suggested default can be sufficient for the initial setup  
+
+(NOTE: in the current design, some of this information is duplicated in `.env` and has to be updated in both places:  
+Keycloak, mongo, mysql and memcached ports on the local machine)   
+
+- On Mac / OS, edit `docker-compose-ini.yml`: comment out with `#` or delete line `- /etc/localtime:/etc/localtime:ro`
 
 - From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
 ```
 docker-compose -f docker-compose-ini.yml build --pull
 ```
 
-`--pull` indicates that the process will always check the Docker Repository for the most current version of the references image(s) and pull if the local image is older 
-
-
-- Review and update the `STACK SCOPE` section of `.config.yml` file that contains setup information for the individual services and project in the devstack's scope. See "Devstack Scope Configuration" below for detailed information. Note, that this configuration can be changed and reapplied anytime after the installation, so the suggested default can be sufficient for the initial setup 
-```
-vi .config.yml
-```
-(NOTE: in the current design, some of this information is duplicated in `.env` and has to be updated in both places:  
-Keycloak, mongo, mysql and memcached ports on the local machine   ) 
+(`--pull` indicates that the process will always check the Docker Repository for the most current version of the references image(s) and pull if the local image is older)   
 
 - Create and start `mysql`. Wait till the log indicates that the server is up: `mysqld: ready for connections` (should be just a few seconds)    
 ```
 docker-compose -f docker-compose-ini.yml up -d mysql
 docker logs mysql.exlskills
 ```
-
 - Create and start the `installer`, `keycloak`, `mongodb` and `memcached` devstack support services. Note, this will not kick off the actual stack installation process just yet: 
 ```
 docker-compose -f docker-compose-ini.yml up -d
 ```
+- Ensure that Keycloak has started by going to `http://localhost:<KEYCLOAK_HOST_PORT from .env>` - "Welcome to Keycloak" page should come up.  
+
 - Log in to the `bash shell` of the installer container and run the installation  
 ```
 docker-compose -f docker-compose-ini.yml exec installer bash
@@ -247,20 +252,19 @@ docker exec -it installer.exlskills bash
 
 The course will be cloned into `<EXL_DEVSTACK_WORKSPACE>/courses/` directory on the host and loaded into the database  
 
-## Exlcode IDE and REPL services
-
-Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the `web-client`. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE` 
-
 ### Running Conversion of Local Courses 
 
 To bypass the git clone step in the process, pass `false` as the flag's value, e.g.,  
 ```
-. /load_course https://github.com/exlskills/micro-course-java-arrays.git false
+. /load_course.sh https://github.com/exlskills/micro-course-java-arrays.git false
 
 ``` 
 
-The load will be performed from the host's `<EXL_DEVSTACK_WORKSPACE>/courses/` folder with the same name as the name of the repository, e.g., `micro-course-java-arrays`   
+The load will be performed from the host's `<EXL_DEVSTACK_WORKSPACE>/courses/` folder with the same name as the name of the repository, e.g., `micro-course-java-arrays`    
 
+## Exlcode IDE and REPL services
+
+Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the `web-client`. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE`  
 
 ## Devstack Scope Configuration
 See `.config.yml` `STACK SCOPE` section  

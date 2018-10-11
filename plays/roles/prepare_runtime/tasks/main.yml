@@ -1,8 +1,13 @@
 ---
-- name: Create compose_fragments directory
+- name: Clear (delete) compose_fragments directory
   file: 
       path: ../compose_fragments
-      state: directory
+      state: absent
+
+- name: Create compose_fragments directory
+  file:
+    path: ../compose_fragments
+    state: directory
 
 - name: Prepare docker-compose.yml header
   template:
