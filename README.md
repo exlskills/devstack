@@ -61,7 +61,7 @@ Admin password and MySQL connection credentials are hardcoded in `docker-compose
 
 ## Installation
 
-NOTE: for the Minimal Configuration installation, see `docs/minimal-configuration-install.md` 
+NOTE: for the Minimal Configuration installation, see [docs/minimal-configuration-install.md](https://github.com/exlskills/devstack/blob/master/docs/minimal-configuration-install.md) 
 
 - Chose an existing user id on the local machine to perform the devstack work under, e.g., `ubuntu`. All folders and components will be set up with the ownership of this user 
 - Login with or switch to the user id 
@@ -133,7 +133,13 @@ vi .config.yml
 (NOTE: in the current design, some of this information is duplicated in `.env` and has to be updated in both places:  
 Keycloak, mongo, mysql and memcached ports on the local machine)   
 
-- On Mac / OS, edit `docker-compose-ini.yml`: comment out with `#` or delete line `- /etc/localtime:/etc/localtime:ro`
+- On Unix only, if you'd like the installer's container system clock to be coordinated with the host, uncomment this line in `docker-compose-ini.yml`: 
+```
+- /etc/localtime:/etc/localtime:ro
+```
+
+TODO: review if similar mapping is available on Mac/iOS 
+
 
 - From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
 ```
