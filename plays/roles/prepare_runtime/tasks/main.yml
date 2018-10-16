@@ -22,6 +22,7 @@
   loop: "{{ projects_in_scope }}" 
   when: item.project_type is defined and item.project_type == "generic-node-server"
 
+# DEPRECATED
 - name: Set up web-client    
   include_tasks: web_client.yml
   vars:

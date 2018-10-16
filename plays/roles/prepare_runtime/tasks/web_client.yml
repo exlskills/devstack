@@ -1,4 +1,5 @@
 ---
+# DEPRECATED
 - debug:
     msg: "{{ project_config }}"
 

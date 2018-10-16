@@ -15,7 +15,7 @@ ports_on_host:
   auth_server: 3030
   gql_server: 8080
   usi_server: 5002
-  web_client: 4000
+  spf_server: 3000
   exlcode_ide: 8000
   exlcode_repl: 8081
 
@@ -30,8 +30,6 @@ mongo_uri: "mongodb://{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
 mongo_db: exldev
 
 memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.memcached }}"
-
-stripe_pub_key: pk_test_havxVOg4IRAlXptV9FLhmfsP
 
 keycloak_client_id: exlskills
 keycloak_realm: exlinc
@@ -90,19 +88,19 @@ projects_in_scope:
   config_file: .env
   prebuilt_image: exlskills/usi-server
 
-- name: web-client
-  project_type: web-client
-  port_on_host: "{{ ports_on_host.web_client }}"
-  container_port: 4000
-  service_setup_method: run-image-prod
+- name: spf-server
+  project_type: generic-node-server
+  port_on_host: "{{ ports_on_host.spf_server }}"
+  container_port: 3000
+  service_setup_method: run-image-dev
   clone_repo: yes
-  repo: https://github.com/exlskills/web-client.git
-  folder: web-client
-  run_install: yarn
-  run_build: yarn
-  config_template: web-client.env.j2
+  repo: https://github.com/exlskills/spf-server.git
+  folder: spf-server
+  run_install: npm
+  run_build: npm
+  config_template: spf-server.env.j2
   config_file: .env
-  prebuilt_image: must-use-custom
+  prebuilt_image: TBD
 
 - name: exlcode-ide
   project_type: aux-server

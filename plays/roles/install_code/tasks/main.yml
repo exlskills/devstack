@@ -59,6 +59,7 @@
   loop: "{{ projects_in_scope }}"
   when: item.run_install is defined and item.run_install == "yarn"
 
+# DEPRECATED
 # web-client work
 - name: get web-client project config
   set_fact:
@@ -75,6 +76,7 @@
     - web_client_proj_config.run_install is defined
     - web_client_proj_config.run_install == "yarn"
 
+# NOT USED
 - name: nginx config for running in prod mode
   block:
     - name: Create nginx config directory
@@ -101,8 +103,7 @@
       template:
         src: "nginx.default.conf.j2"
         dest: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config/conf.d/default.conf"
-
-  when: 
+  when:
     - web_client_proj_config is defined
     - web_client_proj_config.clone_repo is defined
     - web_client_proj_config.clone_repo

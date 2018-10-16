@@ -196,9 +196,9 @@ This completes the installation. Devstack state after the installation:
 - EXLskills services have been running and accessible on the `localhost` at ports per `.config.yml` `NETWORK FOOTPRINT ports_on_host` section
 
 ### Running
-(use the port specified in `.config.yml` `NETWORK FOOTPRINT ports_on_host` `web_client`)
+(use the port specified in `.config.yml` `NETWORK FOOTPRINT ports_on_host` `spf_server`)
 ```
-http://localhost:4000
+http://localhost:3000
 ```
 
 ### Installer Service
@@ -270,7 +270,7 @@ The load will be performed from the host's `<EXL_DEVSTACK_WORKSPACE>/courses/` f
 
 ## Exlcode IDE and REPL services
 
-Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the `web-client`. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE`  
+Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the client. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE`  
 
 ## Devstack Scope Configuration
 See `.config.yml` `STACK SCOPE` section  
