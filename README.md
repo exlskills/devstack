@@ -198,7 +198,7 @@ This completes the installation. Devstack state after the installation:
 ### Running
 (use the port specified in `.config.yml` `NETWORK FOOTPRINT ports_on_host` `spf_server`)
 ```
-http://localhost:3000
+http://localhost:3000/learn
 ```
 
 ### Installer Service

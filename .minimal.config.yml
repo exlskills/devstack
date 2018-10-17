@@ -90,7 +90,7 @@ projects_in_scope:
   prebuilt_image: exlskills/usi-server
 
 - name: spf-server
-project_type: generic-node-server
+  project_type: generic-node-server
   port_on_host: "{{ ports_on_host.spf_server }}"
   container_port: 3000
   service_setup_method: run-image-prod
