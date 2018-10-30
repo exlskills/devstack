@@ -252,7 +252,8 @@ docker exec -it installer.exlskills bash
 ``` 
 - Run `/load-course.sh` script passing the Course repository clone URL and a flag `true` to clone the repository's content, e.g.  
 ```
-. /load_course https://github.com/exlskills/micro-course-java-arrays.git true
+cd /hostlink
+. /load-course.sh https://github.com/exlskills/micro-course-java-arrays.git true
 
 ``` 
 
@@ -262,7 +263,7 @@ The course will be cloned into `<EXL_DEVSTACK_WORKSPACE>/courses/` directory on 
 
 To bypass the git clone step in the process, pass `false` as the flag's value, e.g.,  
 ```
-. /load_course.sh https://github.com/exlskills/micro-course-java-arrays.git false
+. /load-course.sh https://github.com/exlskills/micro-course-java-arrays.git false
 
 ``` 
 
