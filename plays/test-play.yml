@@ -1,0 +1,10 @@
+# ansible-playbook -vvv -e @.config.yml plays/test-play.yml
+
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: init_install
+  - include_role:
+      name: init_elasticsearch

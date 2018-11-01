@@ -313,6 +313,10 @@ docker-compose down
 ```
 Then delete the directories and remove the images  
 
+### Removing a Service 
+
+Stop the service via `docker-compose stop <service name>`, then remove the stopped container via `docker rm <container name>` 
+
 
 ## License
 

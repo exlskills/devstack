@@ -84,3 +84,12 @@ services:
     networks:
       - exlskills      
     restart: unless-stopped
+
+  es:
+    container_name: es.exlskills
+    image: elasticsearch:6.4.2
+    ports:
+    - ${ES_HOST_PORT}:9200
+    networks:
+    - exlskills
+    restart: unless-stopped

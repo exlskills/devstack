@@ -10,10 +10,10 @@ host_dockernetwork_ip: 172.17.0.1
 ports_on_host:
   mongo: 27017
   memcached: 11211
+  es: 9200
   keycloak: 8082
   auth_server: 3030
   gql_server: 8080
-  usi_server: 5002
   spf_server: 3000
 
 # These are not used but required as fillers for configuration:
@@ -74,20 +74,6 @@ projects_in_scope:
   config_template: gql-server.env.j2
   config_file: .env
   prebuilt_image: exlskills/gql-server
-
-- name: usi-server
-  project_type: generic-node-server
-  port_on_host: "{{ ports_on_host.usi_server }}"
-  container_port: 5002
-  service_setup_method: run-image-prod
-  clone_repo: yes
-  repo: https://github.com/exlskills/usi-server.git
-  folder: usi-server
-  run_install: npm
-  run_build: npm
-  config_template: usi-server.env.j2
-  config_file: .env
-  prebuilt_image: exlskills/usi-server
 
 - name: spf-server
   project_type: generic-node-server

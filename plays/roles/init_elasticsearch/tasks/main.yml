@@ -1,0 +1,29 @@
+---
+- name: Check if Index Exists
+  uri:
+    url: "{{ es_url }}/learn_en"
+    method: HEAD
+    status_code: 200, 404
+  register: index_status
+
+- name: Add Index
+  uri:
+    url: "{{ es_url }}/learn_en"
+    method: PUT
+    body_format: json
+    body: "{{ lookup('template', 'index_init.json.j2') }}"
+  vars:
+    text_analyzer: english
+  when:
+    - index_status.status != 200
+
+- name: Update Index
+  uri:
+    url: "{{ es_url }}/learn_en/_mappings/_doc"
+    method: PUT
+    body_format: json
+    body: "{{ index_properties | to_json }}"
+  vars:
+    text_analyzer: english
+  when:
+    - index_status.status == 200

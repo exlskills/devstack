@@ -1,0 +1,11 @@
+---
+es_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.es }}"
+
+index_properties:
+  properties:
+    doc_type:
+      type: keyword
+    doc_text:
+      type: text
+      analyzer: "{{ text_analyzer }}"
+
