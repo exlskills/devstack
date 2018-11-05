@@ -1,4 +1,11 @@
 ---
+- name: delete index
+  uri:
+    url: "{{ es_url }}/learn_en"
+    method: DELETE
+    status_code: 200, 404
+  when: recreate_index
+
 - name: Check if Index Exists
   uri:
     url: "{{ es_url }}/learn_en"
@@ -16,6 +23,26 @@
     text_analyzer: english
   when:
     - index_status.status != 200
+
+- name: Update Index Settings
+  block:
+    - name: Close Index
+      uri:
+        url: "{{ es_url }}/learn_en/_close"
+        method: POST
+    - name: Update Index Settings
+      uri:
+        url: "{{ es_url }}/learn_en/_settings"
+        method: PUT
+        body_format: json
+        body: "{{ index_settings_analysis | to_json }}"
+      ignore_errors: yes
+    - name: Open Index
+      uri:
+        url: "{{ es_url }}/learn_en/_open"
+        method: POST
+  when:
+    - index_status.status == 200
 
 - name: Update Index
   uri:

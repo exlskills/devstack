@@ -1,7 +1,5 @@
 {
-  "settings" : {
-    "number_of_shards" : 1
-  },
+  "settings" : {{ index_settings | to_json }},
   "mappings" : {
     "_doc" : {{ index_properties | to_json }}
   }
