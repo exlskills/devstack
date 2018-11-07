@@ -43,12 +43,19 @@ index_properties:
     title:
       type: text
       analyzer: "{{ text_analyzer }}"
+      fields:
+        title_exact:
+          type: text
+          analyzer: standard
     headline:
       type: text
       analyzer: "{{ text_analyzer }}"
-    doc_text:
+    text_content:
       type: text
       analyzer: "html_{{ text_analyzer }}"
+    code_content:
+      type: text
+      analyzer: standard
     doc_ref:
       type: text
       index: false
