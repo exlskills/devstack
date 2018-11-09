@@ -34,10 +34,8 @@ RUN apt-add-repository ppa:ansible/ansible && \
 # Misc additional packages
 RUN apt-get install -y python-jmespath libx11-dev
 
-COPY ./install-devstack.sh /
-COPY ./zero-daemon.sh /
-COPY ./load-course.sh /
+COPY ./*.sh /
 
-RUN chmod +x /install-devstack.sh && chmod +x /zero-daemon.sh && chmod +x /load-course.sh
+RUN chmod +x /*.sh
 
 CMD ["/zero-daemon.sh"]

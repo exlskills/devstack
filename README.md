@@ -269,6 +269,13 @@ To bypass the git clone step in the process, pass `false` as the flag's value, e
 
 The load will be performed from the host's `<EXL_DEVSTACK_WORKSPACE>/courses/` folder with the same name as the name of the repository, e.g., `micro-course-java-arrays`    
 
+### Updating EOCSUTIL
+
+```
+cd /hostlink
+. /update-eocsutil.sh
+```
+
 ## Exlcode IDE and REPL services
 
 Per current design, `exlcode.com` is the default and only IDE hosting environment for the courses. The link to it is embedded into the course's pages at the conversion and load time. The purpose of `exlcode-ide` and `exlcode-repl` services within the stack is to work with them directly vs. from the client. If not needed, those services can be turned off or removed from the `.config.yml` `STACK SCOPE`  
