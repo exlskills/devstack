@@ -6,3 +6,4 @@ go get -u github.com/exlskills/eocsutil
 dep ensure -v
 yarn install
 go build
+cd /hostlink

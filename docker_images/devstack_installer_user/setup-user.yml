@@ -80,12 +80,15 @@
         validate: 'visudo -cf %s'
       when: not host_user == "root"
 
+    - name: List all shell scripts
+      find:
+        paths: /
+        patterns: '*.sh'
+      register: user_scripts
+
     - name: Set file owner for scripts
       file:
-        path: "{{ item }}"
+        path: "{{ item.path }}"
         owner: "{{ host_uid }}"
         group: "{{ host_gid }}"
-      with_items:
-        - /install-devstack.sh
-        - /zero-daemon.sh
-        - /load-course.sh
+      with_items: "{{ user_scripts.files }}"
