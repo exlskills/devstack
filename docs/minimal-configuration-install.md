@@ -41,6 +41,7 @@ The content of `.env` file should be as follows:
 |MONGO_HOST_PORT|27017|an available local machine port to expose devstack MongoDB service on|
 |MEMCACHED_HOST_PORT|11211|an available local machine port to expose devstack Memcached service on|
 |MYSQL_HOST_PORT|3306|NOT USED in this configuration, leave unchanged|
+|ELASTICSEARCH_HOST_PORT|9200|an available local machine port to expose devstack Elasticsearch service on|
 |MONGO_DB_NAME|exldev|the name of the exlskills database to be created in the MongoDB service|
 
 Note, in the current design, some of the above information is duplicated in the `.config.yml` file (described below) and if changed - should be updated in both places 
@@ -50,9 +51,9 @@ Note, in the current design, some of the above information is duplicated in the 
 export COMPOSE_IGNORE_ORPHANS=1
 ```
 
-- Create directories for MongoDB data (optional, done to ensure that the folders are owned by the local user) 
+- Create directory for data volumes used by the containers (optional, to assign the ownership to the host's user; subdirectories will have ownership per docker-compose and containers' users) 
 ```
-mkdir -p ../data/var-lib-mongodb
+mkdir ../data
 ```
 
 - Review and update `.config.yml` file which contains parameters used by the installation process executed by the installer container 

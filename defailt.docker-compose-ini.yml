@@ -71,7 +71,7 @@ services:
     ports:
       - ${MONGO_HOST_PORT}:27017
     volumes:  
-      - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mongodb:/var/lib/mongodb
+      - ${EXL_DEVSTACK_WORKSPACE}/data/mongo-db:/data/db
     networks:
       - exlskills      
     restart: unless-stopped
@@ -81,6 +81,17 @@ services:
     image: memcached
     ports:
       - ${MEMCACHED_HOST_PORT}:11211
+    networks:
+      - exlskills      
+    restart: unless-stopped
+
+  elasticsearch:
+    container_name: elasticsearch.exlskills
+    image: elasticsearch:6.4.2
+    ports:
+      - ${ELASTICSEARCH_HOST_PORT}:9200
+    volumes:  
+      - ${EXL_DEVSTACK_WORKSPACE}/usr-share-elasticsearch:/usr/share/elasticsearch/data
     networks:
       - exlskills      
     restart: unless-stopped

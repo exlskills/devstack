@@ -8,6 +8,8 @@
     - include_role:
         name: setup_keycloak
     - include_role:
+      name: init_elasticsearch
+    - include_role:
         name: install_code
     - include_role:
         name: build_code

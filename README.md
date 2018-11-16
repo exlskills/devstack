@@ -97,6 +97,7 @@ The content of `.env` file should be as follows:
 |MONGO_HOST_PORT|27017|an available local machine port to expose devstack MongoDB service on|
 |MEMCACHED_HOST_PORT|11211|an available local machine port to expose devstack Memcached service on|
 |MYSQL_HOST_PORT|3306|an available local machine port to expose devstack MySQL service on|
+|ELASTICSEARCH_HOST_PORT|9200|an available local machine port to expose devstack Elasticsearch service on|
 |MONGO_DB_NAME|exldev|the name of the exlskills database to be created in the MongoDB service|
 
 Note, in the current design, some of the above information is duplicated in the `.config.yml` file (described below) and if changed - should be updated in both places  
@@ -105,10 +106,9 @@ Note, in the current design, some of the above information is duplicated in the 
 ```
 export COMPOSE_IGNORE_ORPHANS=1
 ```
-- Create directories for MongoDB and MySQL data (optional, done to ensure that the folders are owned by the local user) 
+- Create directory for data volumes used by the containers (optional, to assign the ownership to the host's user; subdirectories will have ownership per docker-compose and containers' users) 
 ```
-mkdir -p ../data/var-lib-mongodb
-mkdir ../data/var-lib-mysql
+mkdir ../data
 ```
 
 Note, when updating the stack, changes to MySQL service may not take effect unless `../data/var-lib-mysql` folder is removed (`sudo rm -rf ...`) and re-created 
@@ -153,7 +153,7 @@ docker-compose -f docker-compose-ini.yml build --pull
 docker-compose -f docker-compose-ini.yml up -d mysql
 docker logs mysql.exlskills
 ```
-- Create and start the `installer`, `keycloak`, `mongodb` and `memcached` devstack support services. Note, this will not kick off the actual stack installation process just yet: 
+- Create and start the `installer`, `keycloak`, and devstack data support services. Note, this will not kick off the actual stack installation process just yet: 
 ```
 docker-compose -f docker-compose-ini.yml up -d
 ```
@@ -275,6 +275,22 @@ The load will be performed from the host's `<EXL_DEVSTACK_WORKSPACE>/courses/` f
 cd /hostlink
 . /update-eocsutil.sh
 ```
+
+## Exporting and importing MongoDB Data 
+- Create a folder on the host under `exlskills-dev`, e.g., `mkdir ../datadump` 
+- On the installer container, run `mongodump` command:
+```
+cd /hostlink
+mongodump --host 172.17.0.1 --out /exlskills/datadump/data01
+```
+This will create a copy of all MongoDB data in the `datadump/data01` directory on the host 
+
+To bring this data back into MongoDB:
+```
+mongorestore --host 172.17.0.1 --drop /exlskills/datadump/data01
+```
+The `--drop` option is used to remove existing data before importing 
+
 
 ## Exlcode IDE and REPL services
 

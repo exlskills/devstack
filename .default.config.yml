@@ -11,7 +11,7 @@ ports_on_host:
   mongo: 27017
   mysql: 3306
   memcached: 11211
-  es: 9200
+  elasticsearch: 9200
   keycloak: 8082
   auth_server: 3030
   gql_server: 8080

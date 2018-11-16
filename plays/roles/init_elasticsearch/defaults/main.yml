@@ -1,5 +1,5 @@
 ---
-es_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.es }}"
+elasticsearch_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.elasticsearch }}"
 
 recreate_index: no
 

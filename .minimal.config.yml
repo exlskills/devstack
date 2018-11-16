@@ -10,7 +10,7 @@ host_dockernetwork_ip: 172.17.0.1
 ports_on_host:
   mongo: 27017
   memcached: 11211
-  es: 9200
+  elasticsearch: 9200
   keycloak: 8082
   auth_server: 3030
   gql_server: 8080
