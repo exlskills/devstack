@@ -99,3 +99,6 @@
   vars:
     user_data: "{{ item }}"
   loop: "{{ test_users }}"
+
+- debug: 
+    msg: "Note keycloak client secret for auth-server .env {{ keycloak_client_secret }}"   

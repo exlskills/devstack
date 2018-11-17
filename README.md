@@ -291,6 +291,14 @@ mongorestore --host 172.17.0.1 --drop /exlskills/datadump/data01
 ```
 The `--drop` option is used to remove existing data before importing 
 
+## Rebuilding Keycloak 
+If the keycloak configuration has been lost - in the installer, run
+```
+cd /hostlink
+ansible-playbook -vvv -e @.config.yml plays/recreate-keycloak.yml
+```
+This will recreate the keycloak configuration and print the Client Secret's value at the end of the process. The value should be placed into the .env file of the `auth-server` and the `auth-server` restarted  
+
 
 ## Exlcode IDE and REPL services
 
