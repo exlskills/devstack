@@ -348,6 +348,11 @@ Then delete the directories and remove the images
 
 Stop the service via `docker-compose stop <service name>`, then remove the stopped container via `docker rm <container name>` 
 
+## Building Devops Setup and Maintenance Tools Image 
+
+To utilize tools available in this repository for general Devops operations, an image similar to the devstack `installer` can be built using `docker_images/devops_setup_maint_tools/Dockerfile` and deployed on a host with required access to the stack being managed 
+The content of `docker_images/devops_setup_maint_tools/load-image-content.yml` can be adjusted to the specific needs 
+
 
 ## License
 

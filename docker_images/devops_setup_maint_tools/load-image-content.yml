@@ -1,0 +1,70 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: create /exlskills/devstack folder
+      file:
+        path: "/exlskills/devstack"
+        state: directory
+
+    - name: clone devstack repo into this image
+      git:
+        repo: "https://github.com/exlskills/devstack.git"
+        dest: "/exlskills/devstack"
+        depth: 1
+
+    - name: create gopkg folder
+      file:
+        path: "/home/root/gopkg"
+        state: directory
+    
+    - name: Get dep
+      shell: go get -u github.com/golang/dep/cmd/dep
+      environment:
+        GOPATH: /home/root/gopkg
+        PATH: "{{ lookup('env','PATH') }}:/usr/lib/go-1.10/bin:/home/root/gopkg/bin"
+
+    - name: create eocsutil folder
+      file:
+        path: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
+        state: directory
+
+    - name: clone eocsutil repo into this image
+      git:
+        repo: "https://github.com/exlskills/eocsutil.git"
+        dest: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
+        depth: 1
+        version: "{{ repo_branch }}"
+
+    - name: Run 'dep ensure -v'
+      shell: dep ensure -v
+      args:
+        chdir: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
+      environment:
+        GOPATH: /home/root/gopkg
+        PATH: "{{ lookup('env','PATH') }}:/usr/lib/go-1.10/bin:/home/root/gopkg/bin"
+
+    - name: Run 'yarn install' eocsutil
+      yarn:
+        path: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
+
+    - name: Run 'go build'
+      shell: go build
+      args:
+        chdir: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
+      environment:
+        GOPATH: /home/root/gopkg
+        PATH: "{{ lookup('env','PATH') }}:/usr/lib/go-1.10/bin:/home/root/gopkg/bin"
+
+    - name: create course folder
+      file:
+        path: "/exlskills/courses/course-java-basics"
+        state: directory
+
+    - name: Clone Course Repositories
+      git:
+        repo: "https://github.com/exlskills/course-java-basics.git"
+        dest: "/exlskills/courses/course-java-basics"
+        depth: 1
+
