@@ -14,6 +14,10 @@
         dest: "/exlskills/devstack"
         depth: 1
 
+    - name: Run 'npm install' on Devstack
+      npm:
+        path: "/exlskills/devstack"
+
     - name: create gopkg folder
       file:
         path: "/home/root/gopkg"

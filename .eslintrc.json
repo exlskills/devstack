@@ -1,0 +1,76 @@
+{
+  "globals": {
+    "$": true
+  },
+  "parser": "babel-eslint",
+  "extends": ["prettier"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["import", "prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      }
+    ],
+    "object-curly-spacing": 0,
+    "no-param-reassign": 0,
+    "no-extra-boolean-cast": 0,
+    "no-confusing-arrow": 0,
+    "prefer-arrow-callback": 0,
+    "no-case-declarations": 0,
+    "no-return-assign": 0,
+    "new-cap": 0,
+    "no-useless-escape": 0,
+    "no-underscore-dangle": 0,
+    "arrow-body-style": [2, "as-needed"],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "ignore",
+        "imports": "only-multiline",
+        "exports": "only-multiline",
+        "functions": "ignore"
+      }
+    ],
+    "linebreak-style": 0,
+    "import/first": 0,
+    "import/no-webpack-loader-syntax": 0,
+    "import/extensions": 0,
+    "import/imports-first": 0,
+    "import/newline-after-import": 0,
+    "import/no-dynamic-require": 0,
+    "import/no-extraneous-dependencies": 0,
+    "import/no-named-as-default": 0,
+    "import/no-unresolved": 2,
+    "import/prefer-default-export": 0,
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "max-len": 0,
+    "newline-per-chained-call": 0,
+    "no-console": 0,
+    "no-use-before-define": 0,
+    "prefer-template": 0,
+    "class-methods-use-this": 0,
+    "spaced-comment": 0,
+    "require-yield": 0
+  },
+  "settings": {
+    "import/external-module-folders": ["src", "node_modules"]
+  }
+}

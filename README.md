@@ -20,15 +20,17 @@ Other Dependencies:
 
 - allow 5Gb for Docker Image storage 
 - 2Gb+ for Development code with `node_modules` and builds
+- <1Gb for Data
 
 ### Memory
 Please allow enough memory for the Browser client and IDE.  
 The recommendations below are approximate. Use `docker stats` to view the actual usage by service  
 
-- Devstack installer container during the installation - under 1Gb
+- Devstack installer container's Ansible process during the installation - <1Gb
 
-- Devstack components total at runtime - under 2Gb 
+- Devstack components total at runtime: ~3.5Gb 
   * Keycloak container - 512Mb
+  * Elasticsearch container - <1.5Gb
   * MongoDB and MySQL containers - 512Mb combined
   * 3 generic NodeJS server containers - 600Mb combined
   * Other - insignificant
@@ -50,7 +52,9 @@ The `installer` container has a volume share mapped to the designated local fold
 
 ## Passwords 
 
-### MongoDB 
+Note, that all services are exposed on the corresponding host's ports but generally are not accessible from external points that don't have access to those ports on the host 
+
+### MongoDB and Elasticsearch
 Open access 
 ### MySQL 
 Root password and initial user's ceredentials (used by Keycloak) are hardcoded in `docker-compose-ini.yml` 
@@ -276,6 +280,18 @@ cd /hostlink
 . /update-eocsutil.sh
 ```
 
+## Bulk Reload and Re-conversion of all Courses 
+
+In the `installer`, run 
+```
+cd /hostlink
+. /load-all-courses.sh
+```
+
+`load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. Then the process updates the `eocsutil` program and runs the repository pull and course load for each repository on the list. 
+The branch of `eocsutil` used can be set in the `.config.yml` file's `eocsutil_branch` variable 
+  
+
 ## Exporting and importing MongoDB Data 
 - Create a folder on the host under `exlskills-dev`, e.g., `mkdir ../datadump` 
 - On the installer container, run `mongodump` command:
@@ -292,12 +308,20 @@ mongorestore --host 172.17.0.1 --drop /exlskills/datadump/data01
 The `--drop` option is used to remove existing data before importing 
 
 ## Rebuilding Keycloak 
-If the keycloak configuration has been lost - in the installer, run
+If the keycloak configuration has been lost - in the `installer`, run
 ```
 cd /hostlink
 ansible-playbook -vvv -e @.config.yml plays/recreate-keycloak.yml
 ```
 This will recreate the keycloak configuration and print the Client Secret's value at the end of the process. The value should be placed into the .env file of the `auth-server` and the `auth-server` restarted  
+
+## Building or Rebuilding Elasticsearch Index 
+In the `installer`, run
+```
+cd /hostlink
+ansible-playbook -vvv -e @.config.yml -e elasticsearch_url=https://abc.es.domain.com -e recreate_index=yes plays/elasticsearch-init.yml
+```
+This can be used to configure Elasticsearch at a remote target location   
 
 
 ## Exlcode IDE and REPL services

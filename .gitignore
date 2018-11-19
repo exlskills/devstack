@@ -4,6 +4,8 @@ docker-compose-ini.yml
 compose_fragments/
 .config.yml
 
+all-courses.yml
+
 .idea
 .vscode
 

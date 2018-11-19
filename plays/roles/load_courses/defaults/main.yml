@@ -1,0 +1,2 @@
+elasticsearch_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.elasticsearch }}"
+elasticsearch_base_index: "learn"

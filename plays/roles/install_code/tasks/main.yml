@@ -53,6 +53,10 @@
   loop: "{{ projects_in_scope }}"
   when: item.run_install is defined and item.run_install == "npm"
 
+- name: Run 'npm install' on Devstack
+  npm:
+    path: "/exlskills/devstack"
+
 - name: Run 'yarn install'
   yarn:
     path: "/exlskills/{{ item.folder }}"

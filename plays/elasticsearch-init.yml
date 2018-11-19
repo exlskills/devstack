@@ -1,0 +1,8 @@
+# ansible-playbook -vvv -e @.config.yml -e elasticsearch_url=https://abc.es.domain.com -e recreate_index=yes plays/elasticsearch-init.yml
+
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  tasks:
+  - include_role:
+      name: init_elasticsearch
