@@ -39,7 +39,7 @@
         repo: "https://github.com/exlskills/eocsutil.git"
         dest: "/home/root/gopkg/src/github.com/exlskills/eocsutil"
         depth: 1
-        version: "{{ repo_branch }}"
+        version: "{{ eocsutil_repo_branch }}"
 
     - name: Run 'dep ensure -v'
       shell: dep ensure -v

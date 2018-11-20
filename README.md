@@ -289,7 +289,7 @@ cd /hostlink
 ```
 
 `load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. Then the process updates the `eocsutil` program and runs the repository pull and course load for each repository on the list. 
-The branch of `eocsutil` used can be set in the `.config.yml` file's `eocsutil_branch` variable 
+The branch of `eocsutil` used can be set in the `.config.yml` file's `eocsutil_branch` variable, as well as MongoDB `mongo_uri` and `mongo_db`. The Elasticsearch URL can be updated directly in `plays/roles/load_courses/defaults/main.yml` 
   
 
 ## Exporting and importing MongoDB Data 
@@ -319,7 +319,7 @@ This will recreate the keycloak configuration and print the Client Secret's valu
 In the `installer`, run
 ```
 cd /hostlink
-ansible-playbook -vvv -e @.config.yml -e elasticsearch_url=https://abc.es.domain.com -e recreate_index=yes plays/elasticsearch-init.yml
+ansible-playbook -vvv -e elasticsearch_url=https://abc.es.domain.com -e recreate_index=true plays/elasticsearch-init.yml
 ```
 This can be used to configure Elasticsearch at a remote target location   
 

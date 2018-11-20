@@ -7,6 +7,4 @@
   gather_facts: no
   tasks:
   - include_role:
-      name: init_install
-  - include_role:
       name: load_courses

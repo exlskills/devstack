@@ -5,6 +5,4 @@
   gather_facts: no
   tasks:
   - include_role:
-      name: init_install
-  - include_role:
       name: setup_keycloak
