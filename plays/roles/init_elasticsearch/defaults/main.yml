@@ -56,7 +56,11 @@ index_properties:
     code_content:
       type: text
       analyzer: standard
-    doc_ref:
-      type: text
-      index: false
-
+    course_id:
+      type: keyword
+    unit_id:
+      type: keyword
+    section_id:
+      type: keyword
+    card_id:
+      type: keyword
