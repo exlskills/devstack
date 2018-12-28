@@ -32,6 +32,8 @@ mongo_db: exldev
 
 memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.memcached }}"
 
+elasticsearch_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.elasticsearch }}"
+
 keycloak_client_id: exlskills
 keycloak_realm: exlinc
 

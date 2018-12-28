@@ -13,7 +13,7 @@
   shell: go run main.go convert --from-format eocs --from-uri {{ course_folder }} --to-format eocs --to-uri {{ mongo_uri }}
   environment:
     MGO_DB_NAME: "{{ mongo_db }}"
-    ELASTICSEARCH_URI: "{{ elasticsearch_url }}"
+    ELASTICSEARCH_URL: "{{ elasticsearch_url }}"
     ELASTICSEARCH_BASE_INDEX: "{{ elasticsearch_base_index }}"
   args:
     chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
@@ -26,6 +26,8 @@
   shell: go run main.go convert --from-format eocs --from-uri {{ course_folder }} --to-format eocs --to-uri {{ mongo_uri }}
   environment:
     MGO_DB_NAME: "{{ mongo_db }}"
+    ELASTICSEARCH_URL: "{{ elasticsearch_url }}"
+    ELASTICSEARCH_BASE_INDEX: "{{ elasticsearch_base_index }}"
   args:
     chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
   vars:
