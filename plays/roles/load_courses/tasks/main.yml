@@ -13,6 +13,9 @@
   vars:
     string0: "dep:"
 
+- debug:
+    msg: "eocsutil_branch: {{ eocsutil_branch }}"
+
 - name: Get eocsutil via go get
   shell: go get -u github.com/exlskills/eocsutil
   when: eocsutil_branch == "master"
