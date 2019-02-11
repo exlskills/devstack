@@ -2,54 +2,6 @@
 
 # NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
 
-- name: Check dep installed
-  shell: dep version
-  register: dep_version
-  ignore_errors: yes
-
-- name: Get dep
-  shell: go get -u github.com/golang/dep/cmd/dep
-  when: not string0 in dep_version.stdout_lines
-  vars:
-    string0: "dep:"
-
-- debug:
-    msg: "eocsutil_branch: {{ eocsutil_branch }}"
-
-- name: Get eocsutil via go get
-  shell: go get -u github.com/exlskills/eocsutil
-  when: eocsutil_branch == "master"
-
-- name: Clone eocsutil repo
-  git:
-    repo: "https://github.com/exlskills/eocsutil.git"
-    dest: "{{ gopath }}/src/github.com/exlskills/eocsutil"
-    version: "{{ eocsutil_branch }}"
-    force: yes
-  vars:
-    gopath: "{{ lookup('env','GOPATH') }}"
-  when: eocsutil_branch != "master"
-
-- name: Run 'dep ensure -v'
-  shell: dep ensure -v
-  args:
-    chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
-  vars:
-    gopath: "{{ lookup('env','GOPATH') }}"
-
-- name: Run 'yarn install' eocsutil
-  yarn:
-    path: "{{ gopath }}/src/github.com/exlskills/eocsutil"
-  vars:
-    gopath: "{{ lookup('env','GOPATH') }}"
-
-- name: Run 'go build'
-  shell: go build
-  args:
-    chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
-  vars:
-    gopath: "{{ lookup('env','GOPATH') }}"
-
 - name: Clone Course Repositories
   git:
     repo: "{{ item.repo }}"

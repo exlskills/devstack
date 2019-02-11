@@ -285,10 +285,10 @@ cd /hostlink
 In the `installer`, run 
 ```
 cd /hostlink
-. /load-all-courses.sh
+. /load-all-courses.sh true
 ```
 
-`load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. Then the process updates the `eocsutil` program and runs the repository pull and course load for each repository on the list. 
+`load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. If the parameter passed to the script is `true`, the process updates the `eocsutil` program; to bypass the program update, specify `false` instead. The process runs the repository pull and course load for each repository on the list. 
 The branch of `eocsutil` used can be set in the `.config.yml` file's `eocsutil_branch` variable, as well as MongoDB `mongo_uri` and `mongo_db`. The Elasticsearch URL can be updated directly in `plays/roles/load_courses/defaults/main.yml` 
   
 

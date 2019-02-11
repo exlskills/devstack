@@ -7,4 +7,7 @@
   gather_facts: no
   tasks:
   - include_role:
+      name: install_eocsutil
+    when: install_eocsutil
+  - include_role:
       name: load_courses
