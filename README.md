@@ -157,13 +157,16 @@ docker-compose -f docker-compose-ini.yml build --pull
 docker-compose -f docker-compose-ini.yml up -d mysql
 docker logs mysql.exlskills
 ```
+
 - Create and start the `installer`, `keycloak`, and devstack data support services. Note, this will not kick off the actual stack installation process just yet: 
 ```
 docker-compose -f docker-compose-ini.yml up -d
 ```
+
 - Ensure that Keycloak has started by going to `http://localhost:<KEYCLOAK_HOST_PORT from .env>` - "Welcome to Keycloak" page should come up.  
 
 - Log in to the `bash shell` of the installer container and run the installation  
+
 ```
 docker-compose -f docker-compose-ini.yml exec installer bash
 ```
@@ -171,6 +174,7 @@ or
 ```
 docker exec -it installer.exlskills bash
 ``` 
+
 The `bash` starts in `/hostlink` directory on the container, which is mapped to the `devstack` folder on the host  
 Run the installation (this will execute the Ansible process and output detailed information to the console):
 ```
@@ -182,30 +186,31 @@ As the Ansible steps successfully complete (zero `failed` count in the `PLAY REC
 exit
 vi docker-compose.yml
 ```
+
 - If the generated `docker-compose.yml` file contains `build` directives (it will, in the default configuration), run the `docker-compose` `build` process. Note, the `-f` parameter used in the earlier steps is not needed anymore when working with services described in the default `docker-compose.yml` file: 
 ```
 docker-compose build --pull
 ```
+
 - Create and start the core devstack services: 
 ```
 docker-compose up -d
 ```
+
 This completes the installation. Devstack state after the installation:  
+
 - all repositories in scope have been cloned into corresponding folders under the base devstack local machine directory
 - npm packages have been loaded, applicable builds executed
-- keycloak client has been configured and test users created as per `.config.yml` ` STACK SCOPE test_users` section
+- keycloak client has been configured and test users created as per `.config.yml` `STACK SCOPE test_users` section
 - mongo db has been initiated and loaded with the required (minimal) configuration data
 - courses listed in as per `.config.yml` `STACK SCOPE courses_to_load` section have been cloned into `<EXL_DEVSTACK_WORKSPACE>/courses/` directory on the host and loaded into the database 
-- other test data load is TBD-WIP
 - EXLskills services have been running and accessible on the `localhost` at ports per `.config.yml` `NETWORK FOOTPRINT ports_on_host` section
 
-### Running
-(use the port specified in `.config.yml` `NETWORK FOOTPRINT ports_on_host` `spf_server`)
-```
-http://localhost:3000/learn
-```
+### Loading Process Support and Test Data 
 
-### Installer Service
+The `gql-server` code base contains programs to be executed from the command prompt - see `src/data-load` folder. The exact scope of data required is defined by the current state of the code base.
+
+### Installer Service Lifecycle 
 
 After the installation completion, the `installer` service can be left running or stopped. In the idle state, it does not take up any resources (not counting the size of its relatively large image as mentioned above, which cannot be purged till the container is destroyed). However, the memory acquired during the installation is not released till the `installer` is restarted.     
 The `installer` service can be utilized to run refreshes, rebuilds, reloads, additional courses conversion, etc., vs. executing those on the local machine.   
@@ -219,14 +224,20 @@ To release the memory and keep the service available, run form the local machine
 docker-compose -f docker-compose-ini.yml restart installer
 ``` 
 
-### Stopping (Restarting) Individual Services
+## Running
+(use the port specified in `.config.yml` `NETWORK FOOTPRINT ports_on_host` `spf_server`)
+```
+http://localhost:3000/learn
+```
+
+## Stopping (Restarting) Individual Services
 Services may need to be stopped, e.g., when the corresponding server is under developed and being run from the local IDE. To stop a service, run form the local machine's `devstack/` folder:  
 ```
 docker-compose stop <service name as in docker-compose.yml>
 ``` 
 This doesn't remove the container, just releases the host's port the service was operating on. The container can be started back by using the `start` keyword. Depending on how the container's service is set up, the restart may or may not cause the code reload - this should be reviewed individually for each container  
 
-### Refreshing Services
+## Refreshing Services
 After the underlying code and/or configuration update, a service can be "refreshed" by simply restarting it, if it is configured to read code/configuration at startup, or by recreating the container. Run form the local machine's `devstack/` folder:  
 ```
 docker-compose up -d --force-recreate --no-deps <service name as in docker-compose.yml>
@@ -240,10 +251,23 @@ Notes:
 - Nginx-based services configured with `service_setup_method` set to `run-image-prod` should be restarted after code base rebuild to pick up the changed chunk IDs   
 - as Keycloak is configured with a MySQL database backend persisting data on the host's drive, test user/passwords should remain intact after the stack is recreated  
 
-### Auto-restart on Host or Docker Reboot 
+## Auto-restart on Host or Docker Reboot 
 Per `restart: unless-stopped` specification in the docker-compose YAML files for each service, the stack should automatically start up if it was running before the host's OS or Docker daemon reboot     
 
-## Additional Courses Conversion and Load
+## JWT SSH Keys Generation 
+In the User Authentication flow, the JWT Token is generated and signed by the `auth-server` and used by `spf-server` and `gql-server`, as well as by some business logic running on the `auth-server` itself. Therefore, `auth-server` should have both private and public SSH keys used by the JWT logic, and `spf-server` and `gql-server` should have the public key. The keys should be passed into the processes as base64-encoded. 
+
+In Dev, the content of `config/sample_keys` is used. To generate a different pair:
+
+```
+openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+base64 -w 0 private_key.pem > private_key.enc
+base64 -w 0 public_key.pem > public_key.enc
+```
+Then pass the content of the `.enc` files into the services configuration.
+
+## Courses Conversion and Load After Initial Install 
 
 - Start the installer container if not running 
 - Log in to the `bash shell` of the installer container and run the installation  
@@ -263,7 +287,7 @@ cd /hostlink
 
 The course will be cloned into `<EXL_DEVSTACK_WORKSPACE>/courses/` directory on the host and loaded into the database  
 
-### Running Conversion of Local Courses 
+### Working with Course Content Development Locally 
 
 To bypass the git clone step in the process, pass `false` as the flag's value, e.g.,  
 ```
@@ -280,17 +304,23 @@ cd /hostlink
 . /update-eocsutil.sh
 ```
 
-## Bulk Reload and Re-conversion of all Courses 
+### Reloading All Courses 
 
-In the `installer`, run 
+To update the `eocsutil` program and reload all courses from `github/exlskills`, in the `installer`, run 
+
 ```
 cd /hostlink
 . /load-all-courses.sh true
 ```
 
-`load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. If the parameter passed to the script is `true`, the process updates the `eocsutil` program; to bypass the program update, specify `false` instead. The process runs the repository pull and course load for each repository on the list. 
-The branch of `eocsutil` used can be set in the `.config.yml` file's `eocsutil_branch` variable, as well as MongoDB `mongo_uri` and `mongo_db`. The Elasticsearch URL can be updated directly in `plays/roles/load_courses/defaults/main.yml` 
-  
+`load-all-courses.sh` gets the list of all repositories in the github `exlskills` organization and selects those that start with `course-` or `micro-course-`, the list is placed into `all-courses.yml` file. 
+
+To bypass the `eocsutil` program update, pass `false` to `load-all-courses.sh`. 
+
+The process runs the repository pull and course load for each repository on the list. 
+The branch of `eocsutil` to use for the program update can be specified in `.config.yml` `eocsutil_branch` variable.
+
+The destination MongoDB and Elasticsearch can be temporarily overridden in `.config.yml`: `mongo_uri`, `mongo_db`, `elasticsearch_url`, `elasticsearch_base_index`.  
 
 ## Exporting and importing MongoDB Data 
 - Create a folder on the host under `exlskills-dev`, e.g., `mkdir ../datadump` 
@@ -377,6 +407,9 @@ Stop the service via `docker-compose stop <service name>`, then remove the stopp
 To utilize tools available in this repository for general Devops operations, an image similar to the devstack `installer` can be built using `docker_images/devops_setup_maint_tools/Dockerfile` and deployed on a host with required access to the stack being managed 
 The content of `docker_images/devops_setup_maint_tools/load-image-content.yml` can be adjusted to the specific needs 
 
+### Automated Image Build
+`exlskills/devstack-installer-base` image is built when updates are pushed into `installer-base-image-build` branch of this repository 
+
 
 ## License
 
@@ -434,6 +467,3 @@ git config user.email "username@domain.suffix"
 6. Respond to any comments as appropriate, making changes and `git push` ing further changes as appropriate.
 7. When all comments are dealt and the PR finally gets a :+1: from someone else then merge the PR. _Note we will not be using the `git flow feature finish`_ option as that merges into develop automatically without the option for review. [see this stackexchange for more on that](http://programmers.stackexchange.com/questions/187723/code-review-with-git-flow-and-github).
 8. In your command-line `git checkout develop` then `git pull upstream develop` to get the latest code and `git branch -D feature/{branchname}` to delete the old feature branch.
-
-## Automated Image Build
-`exlskills/devstack-installer-base` image is built when updates are pushed into `installer-base-image-build` branch of this repository 

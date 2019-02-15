@@ -5,18 +5,18 @@
   tasks:
     - name: create /exlskills/devstack folder
       file:
-        path: "/exlskills/devstack"
+        path: "{{ base_local_path }}/devstack"
         state: directory
 
     - name: clone devstack repo into this image
       git:
         repo: "https://github.com/exlskills/devstack.git"
-        dest: "/exlskills/devstack"
+        dest: "{{ base_local_path }}/devstack"
         depth: 1
 
     - name: Run 'npm install' on Devstack
       npm:
-        path: "/exlskills/devstack"
+        path: "{{ base_local_path }}/devstack"
 
     - name: create gopkg folder
       file:
@@ -63,12 +63,12 @@
 
     - name: create course folder
       file:
-        path: "/exlskills/courses/course-java-basics"
+        path: "{{ base_local_path }}/courses/course-java-basics"
         state: directory
 
     - name: Clone Course Repositories
       git:
         repo: "https://github.com/exlskills/course-java-basics.git"
-        dest: "/exlskills/courses/course-java-basics"
+        dest: "{{ base_local_path }}/courses/course-java-basics"
         depth: 1
 

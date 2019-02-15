@@ -1,18 +1,15 @@
 ---
-
-# NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
-
 - name: Clone Course Repositories
   git:
     repo: "{{ item.repo }}"
-    dest: "/exlskills/courses/{{ item.folder }}"
+    dest: "{{ base_local_path }}/courses/{{ item.folder }}"
     force: yes
   loop: "{{ courses_to_load }}"    
 
 - name: Load Courses into DB
   include_tasks: convert_and_load_course.yml
   vars:
-    course_folder: "/exlskills/courses/{{ item.folder }}"
+    course_folder: "{{ base_local_path }}/courses/{{ item.folder }}"
     suppress_conversion_error: "Yes"
   loop: "{{ courses_to_load }}"    
   

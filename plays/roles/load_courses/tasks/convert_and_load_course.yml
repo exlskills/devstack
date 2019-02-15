@@ -15,6 +15,7 @@
     MGO_DB_NAME: "{{ mongo_db }}"
     ELASTICSEARCH_URL: "{{ elasticsearch_url }}"
     ELASTICSEARCH_BASE_INDEX: "{{ elasticsearch_base_index }}"
+    MODE: debug
   args:
     chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
   vars:
@@ -28,6 +29,7 @@
     MGO_DB_NAME: "{{ mongo_db }}"
     ELASTICSEARCH_URL: "{{ elasticsearch_url }}"
     ELASTICSEARCH_BASE_INDEX: "{{ elasticsearch_base_index }}"
+    MODE: debug
   args:
     chdir: "{{ gopath }}/src/github.com/exlskills/eocsutil"
   vars:

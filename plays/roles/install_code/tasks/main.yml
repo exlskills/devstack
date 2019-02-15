@@ -1,11 +1,8 @@
 ---
-
-# NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
-
 - name: Clone Repositories
   git:
     repo: "{{ item.repo }}"
-    dest: "/exlskills/{{ item.folder }}"
+    dest: "{{ base_local_path }}/{{ item.folder }}"
     force: yes
   loop: "{{ projects_in_scope }}"
   when: item.clone_repo is defined and item.clone_repo
@@ -13,7 +10,7 @@
 - name: Create Process Config Files
   template:
     src: "{{ item.config_template }}"
-    dest: "/exlskills/{{ item.folder }}/{{ item.config_file }}"
+    dest: "{{ base_local_path }}/{{ item.folder }}/{{ item.config_file }}"
   loop: "{{ projects_in_scope }}"
   when:
     - item.config_template is defined and item.config_template != ""
@@ -31,16 +28,16 @@
     - name: exlcode-ide pre-install
       shell: ./scripts/npm.sh install
       args:
-        chdir: "/exlskills/{{ exlcode_ide_proj_config.folder }}"
+        chdir: "{{ base_local_path }}/{{ exlcode_ide_proj_config.folder }}"
 
     - name: Run 'npm install'
       npm:
-        path: "/exlskills/{{ exlcode_ide_proj_config.folder }}/exlcode"
+        path: "{{ base_local_path }}/{{ exlcode_ide_proj_config.folder }}/exlcode"
 
     - name: Install gulp for exlcode-ide
       npm:
         name: gulp-install
-        path: "/exlskills/{{ exlcode_ide_proj_config.folder }}/exlcode"
+        path: "{{ base_local_path }}/{{ exlcode_ide_proj_config.folder }}/exlcode"
 
   when:
     - exlcode_ide_proj_config is defined
@@ -49,17 +46,17 @@
 
 - name: Run 'npm install'
   npm:
-    path: "/exlskills/{{ item.folder }}"
+    path: "{{ base_local_path }}/{{ item.folder }}"
   loop: "{{ projects_in_scope }}"
   when: item.run_install is defined and item.run_install == "npm"
 
 - name: Run 'npm install' on Devstack
   npm:
-    path: "/exlskills/devstack"
+    path: "{{ base_local_path }}/devstack"
 
 - name: Run 'yarn install'
   yarn:
-    path: "/exlskills/{{ item.folder }}"
+    path: "{{ base_local_path }}/{{ item.folder }}"
   loop: "{{ projects_in_scope }}"
   when: item.run_install is defined and item.run_install == "yarn"
 
@@ -74,7 +71,7 @@
 - name: Run 'yarn run relay' web-client
   shell: yarn run relay
   args:
-    chdir: "/exlskills/{{ web_client_proj_config.folder }}"
+    chdir: "{{ base_local_path }}/{{ web_client_proj_config.folder }}"
   when:
     - web_client_proj_config is defined
     - web_client_proj_config.run_install is defined
@@ -85,28 +82,28 @@
   block:
     - name: Create nginx config directory
       file:
-        path: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config"
+        path: "{{ base_local_path }}/{{ web_client_proj_config.folder }}/nginx_config"
         state: directory
 
     - name: Copy nginx config
       copy:
         src: files/nginx_config/
-        dest: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config/"
+        dest: "{{ base_local_path }}/{{ web_client_proj_config.folder }}/nginx_config/"
 
     - name: Create nginx config sub directory
       file:
-        path: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config/conf.d"
+        path: "{{ base_local_path }}/{{ web_client_proj_config.folder }}/nginx_config/conf.d"
         state: directory
 
     - name: Set up nginx config files - nginx.conf
       template:
         src: "nginx.conf.j2"
-        dest: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config/nginx.conf"
+        dest: "{{ base_local_path }}/{{ web_client_proj_config.folder }}/nginx_config/nginx.conf"
 
     - name: Set up nginx config files - conf.d/default.conf
       template:
         src: "nginx.default.conf.j2"
-        dest: "/exlskills/{{ web_client_proj_config.folder }}/nginx_config/conf.d/default.conf"
+        dest: "{{ base_local_path }}/{{ web_client_proj_config.folder }}/nginx_config/conf.d/default.conf"
   when:
     - web_client_proj_config is defined
     - web_client_proj_config.clone_repo is defined

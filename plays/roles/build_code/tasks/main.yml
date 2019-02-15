@@ -1,18 +1,15 @@
 ---
-
-# NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
-
 - name: Run 'npm run build' 
   shell: npm run build
   args:
-    chdir: "/exlskills/{{ item.folder }}"
+    chdir: "{{ base_local_path }}/{{ item.folder }}"
   loop: "{{ projects_in_scope }}" 
   when: item.run_build is defined and item.run_build == "npm"
 
 - name: Run 'yarn run build' 
   shell: yarn run build
   args:
-    chdir: "/exlskills/{{ item.folder }}"
+    chdir: "{{ base_local_path }}/{{ item.folder }}"
   loop: "{{ projects_in_scope }}" 
   when: item.run_build is defined and item.run_build == "yarn"
 
@@ -20,7 +17,7 @@
 - name: exlcode-ide 'npm run build-min' 
   shell: npm run build-min
   args:
-    chdir: "/exlskills/{{ exlcode_ide_proj_config.folder }}/exlcode"
+    chdir: "{{ base_local_path }}/{{ exlcode_ide_proj_config.folder }}/exlcode"
   when: 
     - exlcode_ide_proj_config is defined
     - exlcode_ide_proj_config.clone_repo is defined

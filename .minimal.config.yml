@@ -1,4 +1,7 @@
 ---
+# Base path used for installation in the Container or VM
+base_local_path: /exlskills
+
 load_courses: yes
 load_data: yes
 eocsutil_branch: master
@@ -33,6 +36,9 @@ mongo_uri: "mongodb://{{ host_dockernetwork_ip }}:{{ ports_on_host.mongo }}"
 mongo_db: exldev
 
 memcached_url: "{{ host_dockernetwork_ip }}:{{ ports_on_host.memcached }}"
+
+elasticsearch_url: "http://{{ host_dockernetwork_ip }}:{{ ports_on_host.elasticsearch }}"
+elasticsearch_base_index: learn
 
 keycloak_client_id: exlskills
 keycloak_realm: exlinc

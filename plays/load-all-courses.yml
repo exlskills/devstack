@@ -1,7 +1,4 @@
 ---
-
-# NOTE: /exlskills/ is the folder on the Installer - it is mapped to the Host's {{ codebase_hostpath }}
-
 - hosts: 127.0.0.1
   connection: local
   gather_facts: no

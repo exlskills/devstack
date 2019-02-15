@@ -4,6 +4,8 @@ docker-compose-ini.yml
 compose_fragments/
 .config.yml
 
+local-work
+
 all-courses.yml
 
 .idea
