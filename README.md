@@ -318,9 +318,18 @@ cd /hostlink
 To bypass the `eocsutil` program update, pass `false` to `load-all-courses.sh`. 
 
 The process runs the repository pull and course load for each repository on the list. 
-The branch of `eocsutil` to use for the program update can be specified in `.config.yml` `eocsutil_branch` variable.
+The branch of `eocsutil` to use for the program update can be specified in `.config.yml` `eocsutil_branch` variable. Note: if you worked with a non-master branch of `eocsutil` you may need to manually switch to master before running the update from master or another branch:
+
+```
+cd /home/ubuntu/gopkg/src/github.com/exlskills/eocsutil
+git status
+git reset HEAD --hard
+git checkout master
+cd /hostlink
+```
 
 The destination MongoDB and Elasticsearch can be temporarily overridden in `.config.yml`: `mongo_uri`, `mongo_db`, `elasticsearch_url`, `elasticsearch_base_index`.  
+
 
 ## Exporting and importing MongoDB Data 
 - Create a folder on the host under `exlskills-dev`, e.g., `mkdir ../datadump` 
@@ -379,6 +388,14 @@ If set to `no`, `git clone` of the component's repository will be bypassed. Othe
  
 ### prebuilt_image   
 Used in combination with `service_setup_method` set to `pull-image` 
+
+## Course Delivery Schedule Loader API Testing
+
+- Install ngrok on the local box and launch it with `http 8080` options, where the number is the port (on host) used in the configuration of the `gql-server` process
+- Put the ngrok-generated URL (without the port) into the webhook of the GitHub repository that contains the delivery schedule to be tested, e.g., https://1234ab56.ngrok.io/course-delivery-schedule, where `/course-delivery-schedule` is the API endpoint on `gql-server`
+- Submit/resubmit the webhook for testing
+
+Note: the API works on the same `gql-server` port as the graphql endpoint
 
 ## Ansible Playbook Structure Overview
 Ansible code is located in the `plays/` folder.  
