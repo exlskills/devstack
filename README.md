@@ -9,7 +9,7 @@ Operating Systems:
 
 - Ubuntu 16.04
 - OS X 10.13+
-- Windows has not been addressed yet, although it should work, conceptually. Windows-related contributions are welcome
+- Windows 10 Pro
 
 Other Dependencies:
 
@@ -35,6 +35,7 @@ The recommendations below are approximate. Use `docker stats` to view the actual
   * 3 generic NodeJS server containers - 600Mb combined
   * Other - insignificant
      
+Note, on Windows, ensure to assign to the Docker Engine additional CPU and Memory availability over the installation defaults - use Docker Desktop->Settings->Advanced
 
 ## Overview
 
@@ -115,6 +116,12 @@ export COMPOSE_IGNORE_ORPHANS=1
 mkdir ../data
 ```
 
+On Windows, use a *docker volume* for MongoDB - update the *volumes* part of the mongodb service to the name of the volume vs. directory, e.g.:
+```
+    volumes:  
+      - mongodbdata:/data/db
+```
+
 Note, when updating the stack, changes to MySQL service may not take effect unless `../data/var-lib-mysql` folder is removed (`sudo rm -rf ...`) and re-created 
 
 
@@ -145,7 +152,7 @@ Keycloak, mongo, mysql and memcached ports on the local machine)
 TODO: review if similar mapping is available on Mac/iOS 
 
 
-- From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the container for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
+- From the `devstack` cloned project directory, run `docker-compose` `build` using the `docker-compose-ini.yml` file to build the image for the `installer` service. The process will pull `exlskills/devstack-installer-base` image and configure it with the selected local user information 
 ```
 docker-compose -f docker-compose-ini.yml build --pull
 ```

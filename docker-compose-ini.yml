@@ -3,6 +3,9 @@ version: "3"
 networks:
   exlskills:
 
+volumes:
+  mongodbdata:
+
 services:
   
   installer:
@@ -26,8 +29,8 @@ services:
     volumes:
       - ./:/hostlink
       - ${EXL_DEVSTACK_WORKSPACE}:/exlskills
-# TODO: for Mac this must be changed
-      - /etc/localtime:/etc/localtime:ro
+# TODO: this should be different for Mac
+#      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
   keycloak:
@@ -62,7 +65,7 @@ services:
       MYSQL_PASSWORD: 'devstack_pwd'
       MYSQL_DATABASE: 'keycloak'
     volumes:
-      - ${EXL_DEVSTACK_WORKSPACE}/data/var-lib-mysql:/var/lib/mysql
+      - ${EXL_DEVSTACK_WORKSPACE}/var-lib-mysql:/var/lib/mysql
     restart: unless-stopped
 
   mongodb:
@@ -71,7 +74,7 @@ services:
     ports:
       - ${MONGO_HOST_PORT}:27017
     volumes:  
-      - ${EXL_DEVSTACK_WORKSPACE}/data/mongo-db:/data/db
+      - mongodbdata:/data/db
     networks:
       - exlskills      
     restart: unless-stopped
@@ -91,7 +94,7 @@ services:
     ports:
       - ${ELASTICSEARCH_HOST_PORT}:9200
     volumes:  
-      - ${EXL_DEVSTACK_WORKSPACE}/data:/usr/share/elasticsearch/data
+      - ${EXL_DEVSTACK_WORKSPACE}/usr-share-elasticsearch:/usr/share/elasticsearch/data
     networks:
       - exlskills      
     restart: unless-stopped
