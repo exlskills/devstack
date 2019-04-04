@@ -7,6 +7,7 @@ RUN apt-get update && \
 # NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get install -y nodejs build-essential
+RUN npm install npm@latest -g    
 
 # Watchman
 RUN apt-get install -y autoconf automake python-dev libssl-dev libtool pkg-config && \

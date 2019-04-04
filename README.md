@@ -237,6 +237,23 @@ docker-compose -f docker-compose-ini.yml restart installer
 http://localhost:3000/learn
 ```
 
+## Viewing Logs
+
+Process logs can be viewed via the `docker logs <container name>` command, e.g., 
+
+```
+docker logs auth-server.exlskills
+```
+
+To view logs for a particular container continuously ("follow"), use the `-f` option with `--tail #of lines` to pre-load a portion of the log:
+
+```
+docker logs -f --tail 100 auth-server.exlskills
+```
+
+Note that docker logs should be truncated - see docker documentation for defaults and recommendations. 
+
+
 ## Stopping (Restarting) Individual Services
 Services may need to be stopped, e.g., when the corresponding server is under developed and being run from the local IDE. To stop a service, run form the local machine's `devstack/` folder:  
 ```
@@ -259,7 +276,10 @@ Notes:
 - as Keycloak is configured with a MySQL database backend persisting data on the host's drive, test user/passwords should remain intact after the stack is recreated  
 
 ## Auto-restart on Host or Docker Reboot 
-Per `restart: unless-stopped` specification in the docker-compose YAML files for each service, the stack should automatically start up if it was running before the host's OS or Docker daemon reboot     
+Per `restart: unless-stopped` specification in the docker-compose YAML files for each service, the stack should automatically start up if it was running before the host's OS or Docker daemon reboot 
+
+Note that on Windows, after auto-rest, the `installer` container may not see the content of the host's shared drive with the projects. If this happens, an explicit manual restart of the container should solve the problem. 
+
 
 ## JWT SSH Keys Generation 
 In the User Authentication flow, the JWT Token is generated and signed by the `auth-server` and used by `spf-server` and `gql-server`, as well as by some business logic running on the `auth-server` itself. Therefore, `auth-server` should have both private and public SSH keys used by the JWT logic, and `spf-server` and `gql-server` should have the public key. The keys should be passed into the processes as base64-encoded. 
