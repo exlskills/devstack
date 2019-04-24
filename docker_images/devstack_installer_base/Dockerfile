@@ -34,7 +34,7 @@ RUN apt-add-repository ppa:ansible/ansible && \
 # - installing MongoDB shell and tools only, MySQL client only
 
 # Misc additional packages
-RUN apt-get install -y python-jmespath libx11-dev
+RUN apt-get install -y python-jmespath python-pip libx11-dev
 
 # Additional Python Libraries for Ansible
 RUN pip install PyMySQL
