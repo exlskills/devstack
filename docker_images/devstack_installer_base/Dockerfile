@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 # Core packages
 RUN apt-get update && \
-    apt-get install -y software-properties-common sudo git-core vim curl wget
+    apt-get install -y software-properties-common sudo git-core vim curl wget unzip
 
 # NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
@@ -25,7 +25,7 @@ RUN apt-add-repository ppa:ansible/ansible && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5 && \
     echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.6.list && \
     apt-get update && \
-    apt-get install -y ansible golang-1.10-go yarn mongodb-org-shell=3.6.7 mongodb-org-tools=3.6.7 && \
+    apt-get install -y ansible golang-1.11-go yarn mongodb-org-shell=3.6.7 mongodb-org-tools=3.6.7 && \
     apt-get install -y mysql-client-5.7 libmysqlclient20
 
 # Notes:
@@ -34,7 +34,7 @@ RUN apt-add-repository ppa:ansible/ansible && \
 # - installing MongoDB shell and tools only, MySQL client only
 
 # Misc additional packages
-RUN apt-get install -y python-jmespath libx11-dev
+RUN apt-get install -y python-jmespath python-pip libx11-dev
 
 # Additional Python Libraries for Ansible
 RUN pip install PyMySQL
