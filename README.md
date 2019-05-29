@@ -1,6 +1,29 @@
 # EXLskills Devstack
   This repo contains docker-compose.yml file used to to start up the backend for front-end work
 
+## Concepts
+
+- Assumption: a powerful developer box with local IDE is the most effective development environment
+- Roles of Docker (docker-compose) in this Devstack:
+  * Facilitate the initial installation of the EXLSkills stack components and some dev environment lifecycle steps
+  * Enable portability and relative neutrality to the dev box underlying OS
+  * Provide a reliable, safe, independent and integrated local runtime environment for EXLSkills stack components in scope
+- Docker containers are NOT the development environment of the Devstack, the local IDE is
+- The "one local file base - multiple execution methods" approach:
+  * The local code can be executed either directly in the terminal, or in the local IDE, or in a running container mapped to the local folder. Although, these methods use potentially (and likely) different code execution software engines and environments, ultimately, the results should match, given proper setup and understanding of the process
+- Control by starting and stopping containers:
+  * containers that run components NOT under local development remain running
+  * container(s) that run component(s) under local development should be stopped and the component(s) executed inside the IDE or local terminal
+  * throughout the dev lifecycle, containers are stopped and restarted accordingly to the local development needs, as well as when updated code is pulled into the local folders
+- Components that are never developed locally can be run by containers started from externally loaded ready-to-run images - no local code copy required  
+- Localhost and Docker Network mismatch impact:
+  * inside a container, `localhost` refers to the container itself vs. the host, which is the `localhost` in the developer's view, as well as when the code is executed in the terminal or local IDE
+  * the mismatch is, nevertheless, common for all modern containerized environment such as Kubernetes, so it should be understood and dealt with
+  * separation of code parameters used for process-to-process (API) communications vs. those used for browser-to-server links is a must
+  * proper environment setup when running a component locally vs. in a container minimizes the *localhost* issue impact on the Devstack
+- Docker Logging capability:
+  * console logs from processes running in the containers are available for viewing and following via the `docker logs` command, just as if the component was running in a local terminal or IDE
+
 ## Requirements
 
 You may be able to get away with more/less than what's described below, but we can't recommend anything outside of these options:
@@ -262,7 +285,17 @@ docker-compose stop <service name as in docker-compose.yml>
 This doesn't remove the container, just releases the host's port the service was operating on. The container can be started back by using the `start` keyword. Depending on how the container's service is set up, the restart may or may not cause the code reload - this should be reviewed individually for each container  
 
 ## Refreshing Services
-After the underlying code and/or configuration update, a service can be "refreshed" by simply restarting it, if it is configured to read code/configuration at startup, or by recreating the container. Run form the local machine's `devstack/` folder:  
+After the underlying code and/or configuration update or re-pull, a service can be "refreshed" by simply restarting it, if it is configured to read code/configuration at startup, or by recreating the container. Run form the local machine's `devstack/` folder:  
+
+|service_setup_method|Action(s) Required to Refresh|
+|----------|----------|
+| run-image-dev | Restart service: `docker-compose restart <service name>` |
+| run-image-prod | Rebuild production code inside the container and restart service  |
+| build-image | `docker-compose build <service name>`, then `docker-compose up -d --force-recreate --no-deps <service name>` |
+| pull-image | Re-pull the source external image, then `docker-compose up -d --force-recreate --no-deps <service name>` |  
+
+## Re-creating Services
+
 ```
 docker-compose up -d --force-recreate --no-deps <service name as in docker-compose.yml>
 ```
